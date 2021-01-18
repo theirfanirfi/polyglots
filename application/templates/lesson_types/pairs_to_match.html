@@ -8,18 +8,22 @@
         </div>
     </header>
     <div class="content-body">
-        <form action="{{url_for('LessonView:group',id=group.group_id)}}" method="POST"
+        <form action="{{url_for('LessonView:pairs_to_match')}}" method="POST"
               enctype="multipart/form-data">
             {{ form.csrf_token }}
+            <input type="hidden" value="{{group.group_id}}" name="group_id">
+
             <div class="form-group row">
                 <label>Sentence (will be split into tags)</label>
-                <input type="text" name="write_this" class="form-control" required/>
+                <input type="text" name="sentence" id="pairs_sentence" class="form-control" required/>
+                <div class="row" id="pairsTags"></div>
+                <div class="row" id="pairsWords"></div>
 
             </div>
 
             <div class="form-group row">
                 <label>Sound</label>
-                <input type="file" name="sound" class="form-control" required/>
+                <input type="file" name="sound" class="form-control"/>
 
             </div>
 

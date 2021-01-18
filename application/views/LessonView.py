@@ -1,5 +1,5 @@
 from flask_classful import FlaskView, route
-from application.models.models import SentenceLesson, Groups, Lessons, MultipleImages, InputBasedOnVoice
+from application.models.models import SentenceLesson, Groups, Lessons, MultipleImages, InputBasedOnVoice, WriteThisLesson, PairsToMatch, TapWhatYouHear
 from flask import render_template, request, redirect, flash
 from application import db
 from flask import redirect, url_for
@@ -172,6 +172,124 @@ class LessonView(FlaskView):
             print(e)
             flash('Error occurred in adding the lesson, please try again.','danger')
             return redirect(request.referrer)
+
+    @route('/write_this', methods=['POST'])
+    def write_this(self):
+        group = Groups.query.get_or_404(request.form['group_id'])
+        areWordsInserted, howManyInserted, totalWords = process_lesson(request, group)
+        if not request.files['sound']:
+            flash("Sound must be provided", 'danger')
+            return redirect(request.referrer)
+
+        correct_sentence = request.form['correct_sentence']
+        sentence = request.form['sentence']
+        tags = request.form['tags']
+
+        if correct_sentence == None or correct_sentence == "" or(sentence == None or sentence == "") or (tags == None or tags == ""):
+            print('Error: validation ')
+            flash('All input fields are required.','danger')
+            return redirect(request.referrer)
+
+        isSaved, file_name = save_file(request.files['sound'], 'lesson')
+        if not isSaved:
+            flash('Sound not uploaded. Please try again.','danger')
+            return redirect(request.referrer)
+
+        new_lesson = WriteThisLesson()
+        new_lesson.group_id = group.group_id
+        new_lesson.language_id = group.language_id
+        new_lesson.sentence = sentence
+        new_lesson.options_tags = tags
+        new_lesson.translation = correct_sentence
+        new_lesson.sounds = file_name
+
+        try:
+            db.session.add(new_lesson)
+            db.session.commit()
+            flash('Lesson Added.', 'info')
+            return redirect(request.referrer)
+        except Exception as e:
+            print(e)
+            flash('Error occurred in creating the lesson. Please try again.','danger')
+            return redirect(request.referrer)
+
+    @route('/pairs_to_match', methods=['POST'])
+    def pairs_to_match(self):
+        group = Groups.query.get_or_404(request.form['group_id'])
+        areWordsInserted, howManyInserted, totalWords = process_lesson(request, group)
+        sound = ""
+        sentence = request.form['sentence']
+
+        if sentence == None or sentence == "":
+            print('Error: validation ')
+            flash('Sentence must be entered.','danger')
+            return redirect(request.referrer)
+
+
+        if request.files['sound']:
+            isSaved, file_name = save_file(request.files['sound'], 'lesson')
+            if isSaved:
+                sound = file_name
+
+        new_lesson = PairsToMatch()
+        new_lesson.group_id = group.group_id
+        new_lesson.language_id = group.language_id
+        new_lesson.sentence = sentence
+        new_lesson.sounds = sound
+
+        try:
+            db.session.add(new_lesson)
+            db.session.commit()
+            flash('Lesson Added.', 'info')
+            return redirect(request.referrer)
+        except Exception as e:
+            print(e)
+            flash('Error occurred in creating the lesson. Please try again.','danger')
+            return redirect(request.referrer)
+
+
+
+    @route('/tap_what_you_hear', methods=['POST'])
+    def tap_what_you_hear(self):
+        group = Groups.query.get_or_404(request.form['group_id'])
+        areWordsInserted, howManyInserted, totalWords = process_lesson(request, group)
+        sound = ""
+        correct_option = request.form['correct_option']
+        tags = request.form['tags']
+
+        if correct_option == None or correct_option == "":
+            print('Error: validation ')
+            flash('correct option must be entered.','danger')
+            return redirect(request.referrer)
+
+
+        if request.files['sound']:
+            isSaved, file_name = save_file(request.files['sound'], 'lesson')
+            if not isSaved:
+                flash('Sound not uploaded. Please try again.', 'danger')
+                return redirect(request.referrer)
+            sound = file_name
+
+        new_lesson = TapWhatYouHear()
+        new_lesson.group_id = group.group_id
+        new_lesson.language_id = group.language_id
+        new_lesson.options_tags = tags
+        new_lesson.translation = correct_option
+        new_lesson.sounds = sound
+
+        try:
+            db.session.add(new_lesson)
+            db.session.commit()
+            flash('Lesson Added.', 'info')
+            return redirect(request.referrer)
+        except Exception as e:
+            print(e)
+            flash('Error occurred in creating the lesson. Please try again.','danger')
+            return redirect(request.referrer)
+
+
+
+
 
 
 

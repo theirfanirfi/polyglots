@@ -178,6 +178,72 @@ $(document).ready(function () {
     });
 
 
+    //write this in _____ ?
+
+    var tags_field = $('#tags_write');
+    var tags_sentence = "";
+
+    tags_field.keyup(function (event) {
+        tags_sentence = tags_field.val();
+        var words = tags_sentence.split(";", tags_sentence.length);
+        console.log(words)
+        if (words.length > 0) {
+            words = shuffle(words);
+            $('#writeThisTags').empty();
+            $('#writeThisTagsWords').empty();
+            $.each(words, function (index, element) {
+                $('#writeThisTags').append(createTags(index, element));
+                $('#writeThisTagsWords').append(createWord(index, element));
+                checkWordRepeatition(index, element);
+            });
+        }
+    });
+
+
+
+    var sentence_pairs = $('#pairs_sentence');
+    //pairsTags
+    //pairsWords
+    var pairs_sentence = "";
+
+    sentence_pairs.keyup(function (event) {
+        pairs_sentence = sentence_pairs.val();
+        console.log(pairs_sentence)
+        var words = pairs_sentence.split(" ", pairs_sentence.length);
+        if (words.length > 0) {
+            words = shuffle(words);
+            $('#pairsTags').empty();
+            $('#pairsWords').empty();
+            $.each(words, function (index, element) {
+                $('#pairsTags').append(createTags(index, element));
+                $('#pairsWords').append(createWord(index, element));
+                checkWordRepeatition(index, element);
+            });
+        }
+    });
+
+
+        var tap_sentence_field = $('#tap_tags');
+    //tapTagsDiv
+    //tapWordsDiv
+    var tap_sentence = "";
+
+    tap_sentence_field.keyup(function (event) {
+        tap_sentence = tap_sentence_field.val();
+        var words = tap_sentence.split(";", tap_sentence.length);
+        if (words.length > 0) {
+            words = shuffle(words);
+            $('#tapTagsDiv').empty();
+            $('#tapWordsDiv').empty();
+            $.each(words, function (index, element) {
+                $('#tapTagsDiv').append(createTags(index, element));
+                $('#tapWordsDiv').append(createWord(index, element));
+                checkWordRepeatition(index, element);
+            });
+        }
+    });
+
+
 
 
 });

@@ -8,9 +8,10 @@
         </div>
     </header>
     <div class="content-body">
-        <form action="{{url_for('LessonView:group',id=group.group_id)}}" method="POST"
+        <form action="{{url_for('LessonView:tap_what_you_hear')}}" method="POST"
               enctype="multipart/form-data">
             {{ form.csrf_token }}
+                            <input type="hidden" value="{{group.group_id}}" name="group_id">
 
             <div class="form-group row">
                 <label>Sound for Taping</label>
@@ -19,11 +20,16 @@
             </div>
 
             <div class="form-group row">
+                <label>Correct Word/Sentence</label>
+                <input type="text" placeholder="Correct...." name="correct_option" id="" class="form-control" required/>
+            </div>
+            <div class="form-group row">
                 <label>Words Separated by semicolon(;)</label>
-                <input type="text" placeholder="words separated by semicolon (;)" name="tags" id="tags"
+                <input type="text" placeholder="words separated by semicolon (;)" name="tags" id="tap_tags"
                        class="form-control"
                        required/>
-
+                <div class="row" id="tapTagsDiv"></div>
+                <div class="row" id="tapWordsDiv"></div>
             </div>
             <div class="form-group row">
 
