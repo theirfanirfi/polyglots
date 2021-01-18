@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="wrapper main-wrapper" style=''>
+
+    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+        <div class="page-title">
+
+            <div class="pull-left">
+                <h1 class="title">ADD COUNTRIES</h1>
+            </div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <section class="box nobox">
+            <div class="content-body">
+                <div class="row">
+
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                        <form action="{{url_for('CountryView:continent', id=continent.continent_id) }}" method="POST" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                        {{form.country_name.label}} {{form.country_name(class="form-control")}}<br>
+                        </div>
+                        <div class="form-group">
+                        {{ form.image.label }}
+                        {{ form.image(class="form-control") }}
+                        </div>
+                        {{form.submit(class="btn btn-primary")}}
+                       </form>
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                      
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 search_data">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form method="post" action="">
+                                     
+                                    <div class="form-group">
+                                        
+                                        <small class="form-text text-muted" style='color:red;'><!-- error1 --></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for=""><!-- label2 --></label>
+                                        <small class="form-text text-muted" style='color:red;'><!-- error2 --></small>
+
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0"
+                                       width="100%">
+                                    <thead>
+                                        
+                                    <tr>
+                                        <!-- <th>Page Title</th> -->
+                                        <th>Country Name</th>
+                                        <th>Image</th>
+                                        <th>Continent</th>
+                                        <th>Total Languages</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for c in countries %}
+                                    <tr>
+                                    
+                                        <td><a href="{{url_for('LanguageView:language',id=c.country_id)}}">{{c.country_name}}</a></td>
+                                        <td><img height="40px" width="60px" class="img-responsive" src="{{url_for('static', filename='countries/')}}{{c.country_image}}" alt="language image"></td>
+                                        <td>{{c.continent_name}}</td>
+                                        <td>{{c.total_languages}}</td>
+                                                                                <td>
+                                            <a href="{{url_for('CountryView:update_country',id=c.country_id)}}"
+                                               class="btn btn-info">Update</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{url_for('CountryView:delete_country',id=c.country_id)}}"
+                                               class="btn btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                      {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</section>
+
+
+</section>
+{% endblock %}

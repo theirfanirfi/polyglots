@@ -1,0 +1,32 @@
+<section class="box">
+
+    <header class="panel_header">
+        <h2 class="title pull-left">Pairs to Match</h2>
+        <div class="actions panel_actions pull-right">
+            <i class="box_toggle fa fa-chevron-down"></i>
+            <i class="box_close fa fa-times"></i>
+        </div>
+    </header>
+    <div class="content-body">
+        <form action="{{url_for('LessonView:group',id=group.group_id)}}" method="POST"
+              enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <div class="form-group row">
+                <label>Sentence (will be split into tags)</label>
+                <input type="text" name="write_this" class="form-control" required/>
+
+            </div>
+
+            <div class="form-group row">
+                <label>Sound</label>
+                <input type="file" name="sound" class="form-control" required/>
+
+            </div>
+
+            <div class="form-group row">
+
+                {{form.submit(class="btn btn-primary")}}
+            </div>
+        </form>
+    </div>
+</section>

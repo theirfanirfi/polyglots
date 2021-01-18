@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="wrapper main-wrapper" style=''>
+
+    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+        <div class="page-title">
+
+            <div class="pull-left">
+                <h1 class="title">ALL GROUPS</h1>
+            </div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <section class="box nobox">
+            <div class="content-body">
+                <div class="row">
+
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                        
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                      
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 search_data">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form method="post" action="">
+                                     
+                                    <div class="form-group">
+                                        
+                                        <small class="form-text text-muted" style='color:red;'><!-- error1 --></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for=""><!-- label2 --></label>
+                                        <small class="form-text text-muted" style='color:red;'><!-- error2 --></small>
+
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0"
+                                       width="100%">
+                                    <thead>
+                                        
+                                    <tr>
+                                        <!-- <th>Page Title</th> -->
+                                        <th>Group Name</th>
+                                        <th>Image</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for group in groups %}
+                                    <tr>
+                                    
+                                        <td><a href="{{url_for('LessonView:lessons',id=group.group_id)}}">{{group.group_name}}</a></td>
+                                        <td><img height="60px" width="60px" class="img-responsive" src="{{url_for('static', filename='group/')}}{{group.group_image}}" alt="language image"></td>
+                                                                                <td>
+                                            <a href="{{url_for('GroupView:update_group',id=group.group_id)}}"
+                                               class="btn btn-info">Update</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{url_for('GroupView:delete_group',id=group.group_id)}}"
+                                               class="btn btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                      {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</section>
+
+
+</section>
+{% endblock %}

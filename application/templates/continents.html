@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="wrapper main-wrapper" style=''>
+
+    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+        <div class="page-title">
+
+            <div class="pull-left">
+                <h1 class="title">ADD CONTINENTS</h1>
+            </div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <section class="box nobox">
+            <div class="content-body">
+                <div class="row">
+
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 search_data">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form method="post" action="{{url_for('ContinentView:continents')}}">
+                                    {{ form.csrf_token }}  
+                                    <div class="form-group">
+                                        {{form.continent_name.label}} 
+                                        {{form.continent_name(class="form-control")}}
+                                        {% if form.continent_name.errors %}
+                                        {% for error in form.continent_name.errors %}
+                                        <p style='color:red;'>{{error}}</p>
+                                        {% endfor %}
+                                        {% endif %}
+                                        <br>
+                                        {{form.submit(class="btn btn-primary")}}
+                                        <small class="form-text text-muted" style='color:red;'><!-- error1 --></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for=""><!-- label2 --></label>
+                                        <small class="form-text text-muted" style='color:red;'><!-- error2 --></small>
+
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0"
+                                       width="100%">
+                                    <thead>
+                                    <tr>
+                                        <!-- <th>Page Title</th> -->
+                                        <th>Continent Name</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tfoot>
+                                    <tr>
+                                        <!-- <th>Page Title</th> -->
+                                        <th>Continent Name</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </tfoot>
+
+                                    <tbody>
+                                    <tr>
+                                        {% for continent in continents %}
+                                        <td><a href="{{url_for('CountryView:continent',id=continent.continent_id)}}">{{continent.continent_name}}</a></td>
+                                                                                <td>
+                                            <a href="{{url_for('ContinentView:update_continent',id=continent.continent_id)}}"
+                                               class="btn btn-info">Update</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{url_for('ContinentView:delete_continent',id=continent.continent_id)}}"
+                                               class="btn btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</section>
+
+
+</section>
+{% endblock %}

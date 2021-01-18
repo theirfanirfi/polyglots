@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="wrapper main-wrapper" style=''>
+
+    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+        <div class="page-title">
+
+            <div class="pull-left">
+                <h1 class="title">ADD WORDS</h1>
+            </div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <section class="box nobox">
+            <div class="content-body">
+                <div class="row">
+
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                        <form action="{{url_for('WordView:words')}}" method="POST" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                        {{form.word_name.label}} {{form.word_name(class="form-control")}}<br>
+                        </div>
+                        {{ form.csrf_token }}
+                        <div class="form-group">
+                        {{form.word_mean.label}} {{form.word_mean(class="form-control")}}<br>
+                        </div>
+                        <div class="form-group">
+                        {{ form.select_language.label }}
+                        {{ form.select_language(class="form-control") }}
+                        </div>
+                        <ul>
+                        {% for error in form.select_language.errors %}
+                        <li style="color:red;">{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                        <div class="form-group">
+                        {{ form.word_image.label }}
+                        {{ form.word_image(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                        {{ form.audio.label }}
+                        {{ form.audio(class="form-control") }}
+                        </div>
+                        {{form.submit(class="btn btn-primary")}}
+                       </form>
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                      
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12 search_data">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form method="post" action="">
+                                     
+                                    <div class="form-group">
+                                        
+                                        <small class="form-text text-muted" style='color:red;'><!-- error1 --></small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for=""><!-- label2 --></label>
+                                        <small class="form-text text-muted" style='color:red;'><!-- error2 --></small>
+
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0"
+                                       width="100%">
+                                    <thead>
+                                        
+                                    <tr>
+                                        <!-- <th>Page Title</th> -->
+                                        <th>Word</th>
+                                        <th>Meaning</th>
+                                        <th>Image</th>
+                                        <th>Sound</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for word in words %}
+                                    <tr>
+                                        <td>{{word.word}}</td>
+                                        <td>{{word.word_meaning}}</td>
+                                        <td><img height="60px" width="60px" class="img-responsive" src="{{url_for('static', filename='word/')}}{{word.word_image}}" alt="language image">
+                                        </td>
+                                        <td>
+                                            Sound
+                                        </td>
+                                        <td>
+                                            <a href="{{url_for('WordView:update_word',id=word.word_id)}}" class="btn btn-info">Update</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{url_for('WordView:delete_word',id=word.word_id)}}" class="btn btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                      {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</section>
+
+
+</section>
+{% endblock %}

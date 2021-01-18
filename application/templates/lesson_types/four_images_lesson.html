@@ -1,0 +1,49 @@
+<section class="box">
+
+    <header class="panel_header">
+        <h2 class="title pull-left">Images Lesson</h2>
+        <div class="actions panel_actions pull-right">
+            <i class="box_toggle fa fa-chevron-down"></i>
+            <i class="box_close fa fa-times"></i>
+        </div>
+    </header>
+    <div class="content-body">
+        <form action="{{url_for('LessonView:images_lesson')}}" method="POST"
+              enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <input type="hidden" name="group_id" value="{{group.group_id}}" required/>
+            <div class="form-group row">
+                <label>Sentence</label>
+                <input type="text" name="sentence" id="four_image_sentence" class="form-control" required/>
+                <div class="row four_lesson_words_display_div"></div>
+            </div>
+
+            <div class="form-group row">
+                <label>Correct Option</label>
+                <input type="text" name="correct_option" id="correct_option" class="form-control" required/>
+                <div class="row four_lesson_words_display_div"></div>
+            </div>
+
+            <h5>Images</h5>
+            <div id="imagesDiv">
+                <Button class="btn btn-info" id="createImageField">Create another Image Field</Button>
+                <div class="form-group row">
+                    <label>Image </label>
+                    <input type="file" name="image[]" class="form-control" required/>
+                </div>
+                <div class="form-group row">
+                    <label>Image Bottom Word</label>
+                    <input type="text" name="bottom_word[]" class="form-control bottom_word" required/>
+                    <div class="row four_lesson_words_display_div"></div>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                {{form.submit(class="btn btn-primary")}}
+            </div>
+
+        </form>
+    </div>
+</section>
