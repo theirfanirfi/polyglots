@@ -7,7 +7,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from application import login_manager
 import random
 from application.utils import send_email
-from application.views.apis.utils import AuthorizeRequest, notLoggedIn
+from application.views.apis.utils import (
+    AuthorizeRequest,
+    notLoggedIn,
+    getPasswordResetUser,
+    getPasswordResetUserWithoutCode,
+)
 
 
 @login_manager.user_loader
@@ -162,6 +167,115 @@ class APIUserView(FlaskView):
                 {
                     "isSent": False,
                     "message": "Error occurred in sending the confirmation code. Please try again.",
+                }
+            )
+
+    @route("/send_password_reset_code", methods=["POST"])
+    def send_password_reset_code(self):
+        email = request.form["email"]
+        user = User.query.filter_by(email=email)
+        if user.count() > 0:
+            reset_code = random.randint(1000, 9999)
+            user = user.first()
+            user.reset_code = reset_code
+            user.reset_token = generate_password_hash(
+                user.email + user.fullname, method="sha256"
+            )
+            try:
+                db.session.add(user)
+                db.session.commit()
+                send_email(
+                    user,
+                    "<h1>Your Password reset code is: " + str(reset_code) + "</h1>",
+                )
+                return jsonify(
+                    {
+                        "isSent": True,
+                        "message": "Password reset code sent to your email",
+                        "reset_token": user.reset_token,
+                    }
+                )
+            except Exception as e:
+                return jsonify(
+                    {
+                        "isSent": True,
+                        "message": "Password reset code sent to your email",
+                        "reset_token": "reset_token",
+                    }
+                )
+        else:
+            return jsonify(
+                {
+                    "isSent": True,
+                    "message": "Password reset code sent to your email",
+                    "reset_token": "reset_token",
+                }
+            )
+
+    @route("/confirm_reset_code", methods=["POST"])
+    def confirm_reset_code(self):
+        form = request.form
+        code = form["code"]
+        email = form["email"]
+
+        user = getPasswordResetUser(request.headers, email, code)
+        if not user:
+            return jsonify(
+                {
+                    "isConfirmed": False,
+                    "message": "Invalid details provided.",
+                }
+            )
+
+        user.reset_token = generate_password_hash(user.token, method="sha256")
+        try:
+            db.session.add(user)
+            db.session.commit()
+            return jsonify(
+                {
+                    "isConfirmed": True,
+                    "message": "Account confirmed",
+                    "reset_token": user.reset_token,
+                }
+            )
+        except Exception as e:
+            return jsonify(
+                {
+                    "isConfirmed": False,
+                    "message": "Error occurred, Please try again.",
+                }
+            )
+
+    @route("/reset_password", methods=["POST"])
+    def reset_password(self):
+        form = request.form
+        email = form["email"]
+        password = form["password"]
+
+        user = getPasswordResetUserWithoutCode(request.headers, email)
+        if not user:
+            return jsonify(
+                {
+                    "isReset": False,
+                    "message": "Invalid details provided.",
+                }
+            )
+
+        user.password = generate_password_hash(password, method="sha256")
+        try:
+            db.session.add(user)
+            db.session.commit()
+            return jsonify(
+                {
+                    "isReset": True,
+                    "message": "Password reseted, you can login now.",
+                }
+            )
+        except Exception as e:
+            return jsonify(
+                {
+                    "isReset": False,
+                    "message": "Error occurred, Please try again.",
                 }
             )
 

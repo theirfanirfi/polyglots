@@ -21,6 +21,8 @@ class User(db.Model, UserMixin):
     role = db.Column(db.Integer, default=0)
     is_confirmed = db.Column(db.Integer, default=0)
     confirmation_code = db.Column(db.Integer, default=0)
+    reset_code = db.Column(db.Integer, default=0)
+    reset_token = db.Column(db.String(200), unique=True, nullable=True)
 
     def get_id(self):
         return self.user_id
