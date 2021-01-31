@@ -28,7 +28,7 @@ class ContinentView(FlaskView):
                     )
             else:
                 return render_template(
-                    "continents.html", form=form, name=current_user.username
+                    "continents.html", form=form, name=current_user.fullname
                 )
         else:
             continents = Continents.query.all()
@@ -36,7 +36,7 @@ class ContinentView(FlaskView):
                 "continents.html",
                 form=form,
                 continents=continents,
-                name=current_user.username,
+                name=current_user.fullname,
             )
 
     @route("/delete_continent/<int:id>")

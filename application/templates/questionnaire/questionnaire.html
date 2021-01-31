@@ -1,0 +1,28 @@
+<section class="box">
+
+    <header class="panel_header">
+        <h2 class="title pull-left">Create Questionnaire for the group</h2>
+        <div class="actions panel_actions pull-right">
+            <i class="box_toggle fa fa-chevron-down"></i>
+            <i class="box_close fa fa-times"></i>
+        </div>
+    </header>
+    <div class="content-body">
+        <form action="{{url_for('LessonView:add_questionnaire')}}" method="POST"
+              enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            <input type="hidden" value="{{group.group_id}}" name="group_id">
+
+            <div class="form-group row">
+                <label>{{form.questionnaire.label}}</label>
+                {{form.questionnaire(class_='form-control')}}
+                {{form.group_id}}
+            </div>
+
+            <div class="form-group row">
+
+                {{form.submit(class="btn btn-primary")}}
+            </div>
+        </form>
+    </div>
+</section>

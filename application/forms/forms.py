@@ -7,6 +7,7 @@ from wtforms import (
     FileField,
     TextAreaField,
     BooleanField,
+    HiddenField,
 )
 from wtforms.validators import DataRequired, Email, Length, InputRequired
 from application.models.models import *
@@ -14,10 +15,16 @@ from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 
-class LoginForm(FlaskForm):
-    username = StringField(
-        "Username", validators=[InputRequired(), Length(min=4, max=15)]
+class QuestionnaireForm(FlaskForm):
+    questionnaire = StringField(
+        "Questionnaire words separated by semicolon(;)", validators=[DataRequired()]
     )
+    group_id = HiddenField(validators=[DataRequired()])
+    submit = SubmitField()
+
+
+class LoginForm(FlaskForm):
+    email = StringField("Email", validators=[InputRequired(), Email()])
     password = PasswordField(
         "Password", validators=[InputRequired(), Length(min=8, max=80)]
     )
@@ -52,6 +59,35 @@ class UpdateContinentForm(FlaskForm):
 class CountryForm(FlaskForm):
     country_name = StringField("Country Name", validators=[DataRequired()])
     image = FileField("Country Image", validators=[FileAllowed(["png", "jpg", "jpeg"])])
+    submit = SubmitField("Add")
+
+
+class AdsForm(FlaskForm):
+    ads_name = StringField("Ad Name", validators=[DataRequired()])
+    ad_age = StringField("Age", validators=[DataRequired()])
+    ad_link = StringField("Ad Link", validators=[DataRequired()])
+
+    ad_continent = SelectField(
+        "Continent",
+        choices=[
+            ("America", "America"),
+            ("Africa", "Africa"),
+            ("Antartica", "Antartica"),
+            ("Europe", "Europe"),
+            ("Middle East", "Middle East"),
+            ("Asia", "Asia"),
+        ],
+        validators=[DataRequired()],
+    )
+    ad_gender = SelectField(
+        "Gender",
+        choices=[("Male", "Male"), ("Female", "Female")],
+        validators=[DataRequired()],
+    )
+    image = FileField(
+        "Ad Image", validators=[FileAllowed(["png", "jpg", "jpeg", "gif"])]
+    )
+    is_bottom_ad = BooleanField("Is Bottom Ad?")
     submit = SubmitField("Add")
 
 

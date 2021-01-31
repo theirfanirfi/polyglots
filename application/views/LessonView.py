@@ -1,9 +1,10 @@
 from flask_classful import FlaskView, route
-from application.models.models import SentenceLesson, Groups, Lessons, MultipleImages, InputBasedOnVoice, WriteThisLesson, PairsToMatch, TapWhatYouHear
+from application.models.models import SentenceLesson, Groups, Lessons, MultipleImages, \
+    InputBasedOnVoice, WriteThisLesson, PairsToMatch, TapWhatYouHear, Questionnaire
 from flask import render_template, request, redirect, flash
 from application import db
 from flask import redirect, url_for
-from application.forms.forms import LessonForm, UpdateLessonForm
+from application.forms.forms import LessonForm, UpdateLessonForm, QuestionnaireForm
 from application.utils import process_lesson, save_file
 from sqlalchemy import text
 import json
@@ -15,7 +16,13 @@ class LessonView(FlaskView):
     def group(self, id):
         group = Groups.query.get_or_404(id)
         lessons = SentenceLesson.query.filter_by(group_id=id).all()
-        form = LessonForm()
+        form = QuestionnaireForm()
+        form.group_id.data = group.group_id
+        questionnaire = Questionnaire.query.filter_by(group_id=group.group_id)
+        if questionnaire.count() > 0:
+            form.questionnaire.data = questionnaire.first().q_tags
+
+
         if request.method == "POST":
             areWordsInserted, howManyInserted, totalWords = process_lesson(request, group)
             new_lesson = SentenceLesson()
@@ -286,6 +293,37 @@ class LessonView(FlaskView):
             print(e)
             flash('Error occurred in creating the lesson. Please try again.','danger')
             return redirect(request.referrer)
+
+
+    @route('/add_questionnaire', methods=['POST'])
+    def add_questionnaire(self):
+        form = QuestionnaireForm()
+        group = Groups.query.get_or_404(form.group_id.data)
+
+        if form.validate_on_submit():
+            check_questionnaire = Questionnaire.query.filter_by(group_id=group.group_id)
+            questionnaire = ""
+            if check_questionnaire.count() > 0:
+                questionnaire = check_questionnaire.first()
+            else:
+                questionnaire = Questionnaire()
+
+            questionnaire.group_id = group.group_id
+            questionnaire.language_id = group.language_id
+            questionnaire.level_id = group.level_id
+            questionnaire.q_tags = form.questionnaire.data
+
+            try:
+                db.session.add(questionnaire)
+                db.session.commit()
+                flash('Questionnaire Added.', 'info')
+                return redirect(request.referrer)
+            except Exception as e:
+                print(e)
+                flash('Error occurred. Please try again.','danger')
+                return redirect(request.referrer)
+        else:
+            return 'Validation error: Questionnaire tags must be provided.'
 
 
 

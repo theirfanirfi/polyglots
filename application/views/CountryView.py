@@ -8,15 +8,6 @@ from application.forms.forms import (
     UpdateCountryForm,
 )
 from application.utils import save_file
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import (
-    LoginManager,
-    UserMixin,
-    login_user,
-    login_required,
-    logout_user,
-    current_user,
-)
 from application import login_manager
 from sqlalchemy import text
 

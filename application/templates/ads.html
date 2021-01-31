@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="wrapper main-wrapper" style=''>
+
+    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+        <div class="page-title">
+
+            <div class="pull-left">
+                <h1 class="title">Advertisements</h1>
+            </div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="col-lg-12">
+        <section class="box nobox">
+            <div class="content-body">
+                <div class="row">
+                    <form action="{{url_for('AdsView:add_ad')}}" method="post" enctype="multipart/form-data">
+                        <div class="col-md-9 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="form-group">
+                                    {{ form.csrf_token }}
+                                    {{form.ads_name.label}}
+                                    {{form.ads_name(class_='form-control')}}
+                                    {% if form.ads_name.errors %}
+                                    {% for error in form.ads_name.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{form.ad_age.label}}
+                                    {{form.ad_age(class_='form-control')}}
+                                    {% if form.ad_age.errors %}
+                                    {% for error in form.ad_age.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{form.ad_gender.label}}
+                                    {{form.ad_gender(class_='form-control')}}
+                                    {% if form.ad_gender.errors %}
+                                    {% for error in form.ad_gender.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{form.ad_continent.label}}
+                                    {{form.ad_continent(class_='form-control')}}
+                                    {% if form.ad_continent.errors %}
+                                    {% for error in form.ad_continent.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{form.ad_link.label}}
+                                    {{form.ad_link(class_='form-control')}}
+                                    {% if form.ad_link.errors %}
+                                    {% for error in form.ad_link.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{form.image.label}}
+                                    {{form.image(class_='form-control')}}
+                                    {% if form.image.errors %}
+                                    {% for error in form.image.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{form.is_bottom_ad.label}}
+                                    {{form.is_bottom_ad()}}
+                                    {% if form.is_bottom_ad.errors %}
+                                    {% for error in form.is_bottom_ad.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{form.submit(class_='btn btn-primary')}}
+                    </form>
+                </div>
+            </div>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+
+    </div>
+
+    <div class="clearfix"></div>
+    <br>
+
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0" width="100%">
+                <thead>
+
+                    <tr>
+                        <!-- <th>Page Title</th> -->
+                        <th>Ad Name</th>
+                        <th>Image</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Continent</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for ad in ads %}
+                    <tr>
+
+                        <td>{{ad.ad_name}}</td>
+                        <td><img height="40px" width="60px" class="img-responsive"
+                                src="{{url_for('static', filename='ads/')}}{{ad.ad_image}}" alt="ad image"></td>
+                        <td>{{ad.ad_gender}}</td>
+                        <td>{{ad.ad_age}}</td>
+                        <td>{{ad.ad_continent}}</td>
+                        <td>
+                            <a href="{{url_for('AdsView:update_ad',ad_id=ad.ad_id)}}" class="btn btn-info">Update</a>
+                        </td>
+                        <td>
+                            <a href="{{url_for('AdsView:delete_ad',id=ad.ad_id)}}" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+        </div>
+
+    </div>
+
+    </div>
+    </div>
+    </div>
+    </div>
+</section>
+
+
+</section>
+{% endblock %}
