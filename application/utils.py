@@ -1,7 +1,8 @@
-from application import app
+from application import app, mail
 from application.models.models import Word
 import os
 from werkzeug.utils import secure_filename
+from flask_mail import Message
 
 
 def save_file(file, type):
@@ -59,12 +60,12 @@ def process_lesson(req, group):
             continue
 
         if words_sounds[i]:
-            iSaved, file_name = save_file(words_sounds[i], 'audio')
+            iSaved, file_name = save_file(words_sounds[i], "audio")
             if iSaved:
                 sound = file_name
 
         if words_images[i]:
-            iSaved, file_name = save_file(words_images[i], 'word')
+            iSaved, file_name = save_file(words_images[i], "word")
             if iSaved:
                 image = file_name
 
@@ -74,3 +75,17 @@ def process_lesson(req, group):
         if isWordInserted:
             counter = counter + 1
     return True, counter, total_words
+
+
+def send_email(user, message):
+    msg = Message("Polyglots points", sender=("Polyglots points", "me@pp.com"))
+    msg.recipients = ["theirfanullah@gmail.com"]
+    msg.body = message
+    msg.html = message
+    try:
+        mail.send(msg)
+        print("email sent")
+        return True
+    except Exception as e:
+        print(e)
+        return False

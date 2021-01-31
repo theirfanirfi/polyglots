@@ -2,6 +2,7 @@ from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
+from flask_mail import Mail
 from flask_login import (
     LoginManager,
     UserMixin,
@@ -11,12 +12,20 @@ from flask_login import (
     current_user,
 )
 
+mail = Mail()
 app = Flask(__name__)
 ma = Marshmallow(app)
 app.config["SECRET_KEY"] = "12345"
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@localhost/polygolt"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_USERNAME"] = "thepukhtoonhacker@gmail.com"
+app.config["MAIL_PASSWORD"] = "Irfan0001"
 db = SQLAlchemy(app)
+mail.init_app(app)
 migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)

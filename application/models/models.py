@@ -13,12 +13,14 @@ class User(db.Model, UserMixin):
     fullname = db.Column(db.String(100), nullable=False)
     gender = db.Column(db.String(15), nullable=False)
     age = db.Column(db.Integer, nullable=False)
-    country_id = db.Column(db.Integer, nullable=False)
-    continent_id = db.Column(db.Integer, nullable=False)
+    country = db.Column(db.String(50), nullable=False)
+    continent = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     token = db.Column(db.String(200), unique=True, nullable=False)
     password = db.Column(db.String(200))
     role = db.Column(db.Integer, default=0)
+    is_confirmed = db.Column(db.Integer, default=0)
+    confirmation_code = db.Column(db.Integer, default=0)
 
     def get_id(self):
         return self.user_id
@@ -35,6 +37,7 @@ class UserSchema(ma.Schema):
             "country_id",
             "continent_id",
             "token",
+            "is_confirmed",
         )
 
 
@@ -78,6 +81,11 @@ class CountriesSchema(ma.Schema):
         fields = ("country_id", "country_name", "country_image")
 
 
+class ContinentSchema(ma.Schema):
+    class Meta:
+        fields = ("continent_id", "continent_name")
+
+
 class Advertisements(db.Model):
     ad_id = db.Column(db.Integer, primary_key=True)
     ad_name = db.Column(db.String(200), nullable=False)
@@ -113,6 +121,7 @@ class AdSchema(ma.Schema):
             "ad_continent",
             "ad_gender",
             "is_bottom_ad",
+            "ad_link",
         )
 
 
@@ -154,13 +163,23 @@ class Level(db.Model):
 
 class LevelSchema(ma.Schema):
     class Meta:
-        fields = ("language_id", "level_id", "level_name", "level_image")
+        fields = (
+            "language_id",
+            "level_id",
+            "level_name",
+            "level_image",
+            "total_groups",
+            "total_done",
+        )
 
 
 class Groups(db.Model):
     group_id = db.Column(db.Integer, primary_key=True)
     group_name = db.Column(db.String(200), nullable=False)
     group_image = db.Column(db.Text, nullable=False)
+    is_group = db.Column(db.Integer, default=0)
+    is_level = db.Column(db.Integer, default=0)
+    is_lesson = db.Column(db.Integer, default=0)
     level_id = db.Column(db.Integer, db.ForeignKey("level.level_id"))
     language_id = db.Column(db.Integer, db.ForeignKey("language.language_id"))
     lesson = db.relationship("Lessons", backref="groups", lazy="dynamic")
@@ -174,7 +193,14 @@ class Groups(db.Model):
 
 class GroupSchema(ma.Schema):
     class Meta:
-        fields = ("language_id", "level_id", "group_id", "group_name", "group_image")
+        fields = (
+            "language_id",
+            "level_id",
+            "group_id",
+            "group_name",
+            "group_image",
+            "total_lessons",
+        )
 
 
 class Lessons(db.Model):
