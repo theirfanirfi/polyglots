@@ -71,7 +71,7 @@ class APILessonView(FlaskView):
                     )
                     lessons.append(lesson)
                 else:
-                    data = {}
+                    data={}
                     data["lesson"] = ls.dump(s)
                     data["dropdown"] = {}
                     lessons.append(data)

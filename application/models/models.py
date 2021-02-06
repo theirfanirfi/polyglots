@@ -208,6 +208,7 @@ class GroupSchema(ma.Schema):
 class Lessons(db.Model):
     lesson_id = db.Column(db.Integer, primary_key=True)
     sentence = db.Column(db.String(200), nullable=True)
+    write_this_in_sentence = db.Column(db.String(200), nullable=True)
     translation = db.Column(db.String(200), nullable=True)
     options_tags = db.Column(db.String(200), nullable=True)
     images = db.Column(db.String(200), nullable=True)
@@ -221,6 +222,10 @@ class Lessons(db.Model):
     is_write_this = db.Column(db.Integer, default=0)
     is_correct_character_selection = db.Column(db.Integer, default=0)
     is_tap_what_you_hear = db.Column(db.Integer, default=0)
+    masculine_feminine_neutral = db.Column(db.String(50), default='N')
+    is_type_answer = db.Column(db.Integer, default=0)
+    real_meaning = db.Column(db.Text, nullable=True)
+    secondary_meaning = db.Column(db.Text, nullable=True)
     language_id = db.Column(db.Integer, db.ForeignKey("language.language_id"))
     group_id = db.Column(db.Integer, db.ForeignKey("groups.group_id"))
 
@@ -230,6 +235,7 @@ class Word(db.Model):
     word = db.Column(db.String(200), nullable=False)
     word_meaning = db.Column(db.String(200), nullable=False)
     audio = db.Column(db.Text, nullable=True)
+    masculine_feminine_neutral = db.Column(db.String(50), nullable=True)
     word_image = db.Column(db.Text, nullable=True)
     language_id = db.Column(db.Integer, db.ForeignKey("language.language_id"))
 
@@ -277,6 +283,8 @@ class LessonSchema(ma.Schema):
             "is_tap_what_you_hear",
             "language_id",
             "group_id",
+            "masculine_feminine_neutral",
+            "write_this_in_sentence"
         )
 
 

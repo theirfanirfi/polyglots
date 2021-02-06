@@ -1,6 +1,6 @@
 from flask_classful import FlaskView, route
 from application.models.models import SentenceLesson, Groups, Lessons, MultipleImages, \
-    InputBasedOnVoice, WriteThisLesson, PairsToMatch, TapWhatYouHear, Questionnaire
+    InputBasedOnVoice, WriteThisLesson, PairsToMatch, TapWhatYouHear, Questionnaire, SingelImage
 from flask import render_template, request, redirect, flash
 from application import db
 from flask import redirect, url_for
@@ -8,6 +8,7 @@ from application.forms.forms import LessonForm, UpdateLessonForm, QuestionnaireF
 from application.utils import process_lesson, save_file
 from sqlalchemy import text
 import json
+
 
 class LessonView(FlaskView):
     # load lessons of the group
@@ -22,16 +23,21 @@ class LessonView(FlaskView):
         if questionnaire.count() > 0:
             form.questionnaire.data = questionnaire.first().q_tags
 
-
         if request.method == "POST":
             areWordsInserted, howManyInserted, totalWords = process_lesson(request, group)
             new_lesson = SentenceLesson()
             sentence = request.form['sentence']
-            new_lesson.sentence = sentence.replace(".","")
+            new_lesson.sentence = sentence.replace(".", "")
             translation = request.form['translation']
-            new_lesson.translation = translation.replace(".","")
+            new_lesson.translation = translation.replace(".", "")
             new_lesson.group_id = group.group_id
             new_lesson.language_id = group.language_id
+            new_lesson.real_meaning = request.form['real_meaning']
+            new_lesson.secondary_meaning = request.form['secondary_meaning']
+            if 'answer_to_type' in request.form:
+                new_lesson.is_type_answer = 1
+
+            new_lesson.masculine_feminine_neutral = request.form['sentence_type']
             try:
                 db.session.add(new_lesson)
                 db.session.commit()
@@ -43,8 +49,9 @@ class LessonView(FlaskView):
                 flash("Error occurred in creating the lesson, please try again.", "danger")
                 return redirect(request.referrer)
         else:
-            sql = text("SELECT *, (select count(*) FROM lessons WHERE sentence like CONCAT('%',words.word, '%')) as word_count "
-                       "FROM word as words WHERE language_id="+str(group.language_id))
+            sql = text(
+                "SELECT *, (select count(*) FROM lessons WHERE sentence like CONCAT('%',words.word, '%')) as word_count "
+                "FROM word as words WHERE language_id=" + str(group.language_id))
             # words = Word.query.filter_by(language_id=group.language_id).all()
             words = db.engine.execute(sql)
             return render_template("lesson.html", form=form, lessons=lessons, group=group, words=words)
@@ -86,6 +93,7 @@ class LessonView(FlaskView):
         # all_lessons = Lessons.query.all()
         # return render_template("all_lessons.html", all_lessons=all_lessons)
         return render_template('lessons_type.html')
+
     @route("/check/<string:word>/")
     def check(self, word):
         search = "%{}%".format(word)
@@ -103,12 +111,12 @@ class LessonView(FlaskView):
         bottom_words = request.form.getlist('bottom_word[]')
         correct_option = request.form['correct_option']
         sentence = request.form['sentence']
+        sentence_type = request.form['sentence_type']
 
-        if correct_option == None or correct_option == "" or(sentence == None or sentence == ""):
+        if correct_option == None or correct_option == "" or (sentence == None or sentence == ""):
             print('correct option')
-            flash('Correct option must be provided','danger')
+            flash('Correct option must be provided', 'danger')
             return redirect(request.referrer)
-
 
         images_list = list()
         words_list = list()
@@ -116,7 +124,7 @@ class LessonView(FlaskView):
             for word, file in enumerate(files):
                 isUploaded, file_name = save_file(file, 'lesson')
                 if not isUploaded:
-                    flash('Error occurred in uploading the image, please try again.','danger')
+                    flash('Error occurred in uploading the image, please try again.', 'danger')
                     print('file not uploaded')
                     return redirect(request.referrer)
                 images_list.append(file_name)
@@ -134,6 +142,7 @@ class LessonView(FlaskView):
         new_lesson.words_for_images = str(json.dumps(words_list))
         new_lesson.translation = correct_option
         new_lesson.sentence = sentence
+        new_lesson.masculine_feminine_neutral = sentence_type
         print(new_lesson)
         try:
             db.session.add(new_lesson)
@@ -154,7 +163,7 @@ class LessonView(FlaskView):
             flash("Sound must be provided", 'danger')
             return redirect(request.referrer)
 
-        sound_file  = request.files['sound']
+        sound_file = request.files['sound']
         tags = request.form['tags']
         if tags == None or tags == "":
             flash("Words separated by semicolon(;) must be provided", 'danger')
@@ -173,11 +182,11 @@ class LessonView(FlaskView):
         try:
             db.session.add(new_lesson)
             db.session.commit()
-            flash('Lesson added','info')
+            flash('Lesson added', 'info')
             return redirect(request.referrer)
         except Exception as e:
             print(e)
-            flash('Error occurred in adding the lesson, please try again.','danger')
+            flash('Error occurred in adding the lesson, please try again.', 'danger')
             return redirect(request.referrer)
 
     @route('/write_this', methods=['POST'])
@@ -191,15 +200,19 @@ class LessonView(FlaskView):
         correct_sentence = request.form['correct_sentence']
         sentence = request.form['sentence']
         tags = request.form['tags']
+        write_this = request.form['write_this']
+        sentence_type = request.form['sentence_type']
 
-        if correct_sentence == None or correct_sentence == "" or(sentence == None or sentence == "") or (tags == None or tags == ""):
+
+        if correct_sentence == None or correct_sentence == "" or (sentence == None or sentence == "") or (
+                tags == None or tags == ""):
             print('Error: validation ')
-            flash('All input fields are required.','danger')
+            flash('All input fields are required.', 'danger')
             return redirect(request.referrer)
 
         isSaved, file_name = save_file(request.files['sound'], 'lesson')
         if not isSaved:
-            flash('Sound not uploaded. Please try again.','danger')
+            flash('Sound not uploaded. Please try again.', 'danger')
             return redirect(request.referrer)
 
         new_lesson = WriteThisLesson()
@@ -209,6 +222,15 @@ class LessonView(FlaskView):
         new_lesson.options_tags = tags
         new_lesson.translation = correct_sentence
         new_lesson.sounds = file_name
+        new_lesson.write_this_in_sentence = write_this
+        new_lesson.language_id = group.language_id
+        new_lesson.real_meaning = request.form['real_meaning']
+        new_lesson.secondary_meaning = request.form['secondary_meaning']
+
+        if 'answer_to_type' in request.form:
+            new_lesson.is_type_answer = 1
+
+        new_lesson.masculine_feminine_neutral = sentence_type
 
         try:
             db.session.add(new_lesson)
@@ -217,7 +239,7 @@ class LessonView(FlaskView):
             return redirect(request.referrer)
         except Exception as e:
             print(e)
-            flash('Error occurred in creating the lesson. Please try again.','danger')
+            flash('Error occurred in creating the lesson. Please try again.', 'danger')
             return redirect(request.referrer)
 
     @route('/pairs_to_match', methods=['POST'])
@@ -229,9 +251,8 @@ class LessonView(FlaskView):
 
         if sentence == None or sentence == "":
             print('Error: validation ')
-            flash('Sentence must be entered.','danger')
+            flash('Sentence must be entered.', 'danger')
             return redirect(request.referrer)
-
 
         if request.files['sound']:
             isSaved, file_name = save_file(request.files['sound'], 'lesson')
@@ -251,10 +272,8 @@ class LessonView(FlaskView):
             return redirect(request.referrer)
         except Exception as e:
             print(e)
-            flash('Error occurred in creating the lesson. Please try again.','danger')
+            flash('Error occurred in creating the lesson. Please try again.', 'danger')
             return redirect(request.referrer)
-
-
 
     @route('/tap_what_you_hear', methods=['POST'])
     def tap_what_you_hear(self):
@@ -266,9 +285,8 @@ class LessonView(FlaskView):
 
         if correct_option == None or correct_option == "":
             print('Error: validation ')
-            flash('correct option must be entered.','danger')
+            flash('correct option must be entered.', 'danger')
             return redirect(request.referrer)
-
 
         if request.files['sound']:
             isSaved, file_name = save_file(request.files['sound'], 'lesson')
@@ -291,9 +309,8 @@ class LessonView(FlaskView):
             return redirect(request.referrer)
         except Exception as e:
             print(e)
-            flash('Error occurred in creating the lesson. Please try again.','danger')
+            flash('Error occurred in creating the lesson. Please try again.', 'danger')
             return redirect(request.referrer)
-
 
     @route('/add_questionnaire', methods=['POST'])
     def add_questionnaire(self):
@@ -320,15 +337,53 @@ class LessonView(FlaskView):
                 return redirect(request.referrer)
             except Exception as e:
                 print(e)
-                flash('Error occurred. Please try again.','danger')
+                flash('Error occurred. Please try again.', 'danger')
                 return redirect(request.referrer)
         else:
             return 'Validation error: Questionnaire tags must be provided.'
 
+    @route("/single_image_lesson", methods=['POST'])
+    def single_image_lesson(self):
+        group = Groups.query.get_or_404(request.form['group_id'])
+        areWordsInserted, howManyInserted, totalWords = process_lesson(request, group)
+
+        file = request.files['image']
+        correct_option = request.form['correct_sentence_word']
+        sentence = request.form['sentence']
+        sentence_type = request.form['sentence_type']
+        if not file:
+            flash('Select Image.', 'danger')
+            return redirect(request.referrer)
+
+        isSaved, file_name = save_file(file,'lesson')
+        if not isSaved:
+            flash('Error occurred. Please try again.', 'danger')
+            return redirect(request.referrer)
 
 
+        if correct_option == None or correct_option == "" or (sentence == None or sentence == ""):
+            flash('Correct option must be provided', 'danger')
+            return redirect(request.referrer)
 
 
-
-
+        new_lesson = SingelImage()
+        # new_lesson.translation =
+        new_lesson.group_id = group.group_id
+        new_lesson.language_id = group.language_id
+        new_lesson.images = file_name
+        new_lesson.translation = correct_option
+        new_lesson.sentence = sentence
+        new_lesson.is_type_answer = 1 if 'answer_to_type' in request.form else 0
+        new_lesson.masculine_feminine_neutral = sentence_type
+        print(new_lesson)
+        try:
+            db.session.add(new_lesson)
+            db.session.commit()
+            print('committed')
+            flash('Lesson Created', 'info')
+            return redirect(request.referrer)
+        except Exception as e:
+            print(e)
+            flash("Error occurred in creating the lesson, please try again.", "danger")
+            return redirect(request.referrer)
 

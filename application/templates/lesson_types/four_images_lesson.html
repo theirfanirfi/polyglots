@@ -19,8 +19,24 @@
             </div>
 
             <div class="form-group row">
-                <label>Correct Option</label>
-                <input type="text" name="correct_option" id="correct_option" class="form-control" required/>
+                <label>Sentence type</label>
+                <select class="form-control" name="sentence_type" required>
+                    <option value='N'>Neutral</option>
+                    <option value='N/P'>Neutral Plural</option>
+                    <option value='N/S'>Neutral Singular</option>
+                    <option value="M">Masculine</option>
+                    <option value="M/S">Masculine Singular</option>
+                    <option value="M/P">Masculine Plural</option>
+                    <option value="F">Feminine</option>
+                    <option value="F/S">Feminine Singular</option>
+                    <option value="F/P">Feminine Plural</option>
+                </select>
+
+            </div>
+
+            <div class="form-group row">
+                <label style="color:green;">Correct Option</label>
+                <input type="text" style="color:green;font-weight:bold;" name="correct_option" id="correct_option" class="form-control" required/>
                 <div class="row four_lesson_words_display_div"></div>
             </div>
 

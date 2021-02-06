@@ -1,35 +1,69 @@
 <section class="box">
 
-                    <header class="panel_header">
-                        <h2 class="title pull-left">Single Image Lesson</h2>
-                        <div class="actions panel_actions pull-right">
-                            <i class="box_toggle fa fa-chevron-down"></i>
-                            <i class="box_close fa fa-times"></i>
-                        </div>
-                    </header>
-                    <div class="content-body">
-                        <form action="{{url_for('LessonView:single_image_lesson')}}" method="POST"
-                              enctype="multipart/form-data">
-                            {{ form.csrf_token }}
+    <header class="panel_header">
+        <h2 class="title pull-left">Single Image Lesson</h2>
+        <div class="actions panel_actions pull-right">
+            <i class="box_toggle fa fa-chevron-down"></i>
+            <i class="box_close fa fa-times"></i>
+        </div>
+    </header>
+    <div class="content-body">
+        <form action="{{url_for('LessonView:single_image_lesson')}}" method="POST"
+              enctype="multipart/form-data">
+            {{ form.csrf_token }}
 
+            <div class="form-group row">
+                <label>Sentence</label>
+                <input type="text" name="sentence" id="sentence" class="form-control"
+                       required/>
+            </div>
 
-                            <div class="form-group row">
-                                <label>Image</label>
-                                <input type="file" name="image" id="image" class="form-control" required/>
+            <div class="form-group row">
 
-                            </div>
+                <div id="words"></div>
+            </div>
 
-                            <input type="hidden" name="group_id" value="{{group.group_id}}" required />
+            <div class="form-group row">
+                <label>Image</label>
+                <input type="file" name="image" id="image" class="form-control" required/>
 
-                            <div class="form-group row">
-                                <label>Bottom Word</label>
-                                <input type="text" name="bottom_word" id="bottom_word" class="form-control" required/>
-                            </div>
-                            <div class="row" id="singleImageLessonWordDisplayDiv"></div>
-                            <div class="form-group row">
+            </div>
 
-                                {{form.submit(class="btn btn-primary")}}
-                            </div>
-                        </form>
-                    </div>
-                </section>
+            <input type="hidden" name="group_id" value="{{group.group_id}}" required/>
+
+            <div class="form-group row">
+                <label style="color:green;">Correct Sentence/word</label>
+                <input type="text" style="color:green;font-weight:bold;" name="correct_sentence_word"
+                       id="correct_sentence_word" class="form-control" required/>
+            </div>
+
+            <div class="form-group row">
+                <label>Sentence type</label>
+                <select class="form-control" name="sentence_type" required>
+                    <option value='N'>Neutral</option>
+                    <option value='N/P'>Neutral Plural</option>
+                    <option value='N/S'>Neutral Singular</option>
+                    <option value="M">Masculine</option>
+                    <option value="M/S">Masculine Singular</option>
+                    <option value="M/P">Masculine Plural</option>
+                    <option value="F">Feminine</option>
+                    <option value="F/S">Feminine Singular</option>
+                    <option value="F/P">Feminine Plural</option>
+                </select>
+
+            </div>
+
+            <div class="form-group row">
+                <label>Answer to type?</label>
+                <input type="checkbox" name="answer_to_type" id="answer_to_type" class=""/>
+
+            </div>
+
+            <div class="row" id="singleImageLessonWordDisplayDiv"></div>
+            <div class="form-group row">
+
+                {{form.submit(class="btn btn-primary")}}
+            </div>
+        </form>
+    </div>
+</section>

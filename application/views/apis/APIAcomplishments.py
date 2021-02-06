@@ -3,12 +3,16 @@ from application.models.models import Accomplishments
 from flask import request
 from application import db
 from flask import jsonify
+from application.views.apis.utils import AuthorizeRequest, notLoggedIn
 
 
 class APIAcomplishmentsView(FlaskView):
     @route("/save_progress", methods=["POST"])
     def save_progress(self):
-        print(request.headers)
+        user = AuthorizeRequest(request.headers)
+        if not user:
+            return jsonify(notLoggedIn)
+
         form = request.form
         q_tags = form["q_tags"]
         if q_tags == "":
@@ -26,12 +30,11 @@ class APIAcomplishmentsView(FlaskView):
         group_id = form["group_id"]
         level_id = form["level_id"]
         language_id = form["language_id"]
-        user_id = form["user_id"]
         acp = Accomplishments.query.filter_by(
             group_id=group_id,
             level_id=level_id,
             language_id=language_id,
-            user_id=user_id,
+            user_id=user.user_id,
         )
         new_acp = ""
         if acp.count() > 0:
@@ -41,8 +44,8 @@ class APIAcomplishmentsView(FlaskView):
 
         new_acp.group_id = group_id
         new_acp.level_id = level_id
-        new_acp.language_id = group_id
-        new_acp.user_id = user_id
+        new_acp.language_id = language_id
+        new_acp.user_id = user.user_id
         new_acp.q_tags = q_tags
 
         try:

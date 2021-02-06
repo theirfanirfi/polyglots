@@ -45,6 +45,22 @@ function createWord(index, word) {
     wordFields += "<div class='row' style='margin:12px;'>";
 
     wordFields += "<div class='col-md-2' ><label>Word Image</label></div><div class='col-md-4'>  <input type='file' name='word_image[]' class='form-control' /></div></div>";
+    wordFields += '<div class="row" style="margin:12px;">';
+    wordFields += "<div class='col-md-2' ><label>Word Type</label></div>";
+    wordFields += '<div class="col-md-4"><select class="form-control" name="sentence_type" required>';
+    wordFields += "<option value='N'>Neutral</option>";
+    wordFields += "<option value='N/P'>Neutral Plural</option>";
+    wordFields += "<option value='N/S'>Neutral Singular</option>";
+    wordFields += "<option value='M'>Masculine</option>";
+    wordFields += "<option value='M/S'>Masculine Singular</option>";
+    wordFields += "<option value='M/P'>Masculine Plural</option>";
+    wordFields += "<option value='F'>Feminine</option>";
+    wordFields += "<option value='F/S'>Feminine Singular</option>";
+    wordFields += "<option value='F/P'>Feminine Plural</option>";
+    wordFields += "</select> </div>";
+
+    wordFields += "</div>";
+
     //        wordFields += "<div class='row' style='margin:12px;'>";
 
     //    wordFields += "<div class='col-md-1'><Button onclick='removeWord(" + index + ");' class='btn btn-danger'><i class='fa fa-trash' ></i></Button></div></div>";
@@ -142,23 +158,23 @@ $(document).ready(function () {
 
 
     //four image lesson
-    bottom_word_input_fields = $('.bottom_word');
-    console.log(bottom_word_input_fields)
+    //    bottom_word_input_fields = $('.bottom_word');
+    //    console.log(bottom_word_input_fields)
     var four_image_sentence_field = $('#four_image_sentence');
-
-    bottom_word_input_fields.keyup(function (event) {
-        sentence = $(this).val();
-        var field = $(this);
-        var words = sentence.split(" ", sentence.length);
-
-        if (words.length > 0) {
-            $(field).next('.row .four_lesson_words_display_div').empty();
-            $.each(words, function (index, element) {
-                $(field).next('.row .four_lesson_words_display_div').append(createWord(index, element));
-                checkWordRepeatition(index, element);
-            });
-        }
-    });
+    //
+    //    bottom_word_input_fields.keyup(function (event) {
+    //        sentence = $(this).val();
+    //        var field = $(this);
+    //        var words = sentence.split(" ", sentence.length);
+    //
+    //        if (words.length > 0) {
+    //            $(field).next('.row .four_lesson_words_display_div').empty();
+    //            $.each(words, function (index, element) {
+    //                $(field).next('.row .four_lesson_words_display_div').append(createWord(index, element));
+    //                checkWordRepeatition(index, element);
+    //            });
+    //        }
+    //    });
 
 
 
@@ -223,7 +239,7 @@ $(document).ready(function () {
     });
 
 
-        var tap_sentence_field = $('#tap_tags');
+    var tap_sentence_field = $('#tap_tags');
     //tapTagsDiv
     //tapWordsDiv
     var tap_sentence = "";
@@ -248,17 +264,17 @@ $(document).ready(function () {
 
 });
 
-$(document.body).on('keyup', '.bottom_word', function () {
-    sentence = $(this).val();
-    var field = $(this);
-    var words = sentence.split(" ", sentence.length);
-
-    if (words.length > 0) {
-        $(field).next('.row .four_lesson_words_display_div').empty();
-        $.each(words, function (index, element) {
-            $(field).next('.row .four_lesson_words_display_div').append(createWord(index, element));
-            checkWordRepeatition(index, element);
-
-        });
-    }
-});
+//$(document.body).on('keyup', '.bottom_word', function () {
+//    sentence = $(this).val();
+//    var field = $(this);
+//    var words = sentence.split(" ", sentence.length);
+//
+//    if (words.length > 0) {
+//        $(field).next('.row .four_lesson_words_display_div').empty();
+//        $.each(words, function (index, element) {
+//            $(field).next('.row .four_lesson_words_display_div').append(createWord(index, element));
+//            checkWordRepeatition(index, element);
+//
+//        });
+//    }
+//});

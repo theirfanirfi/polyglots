@@ -14,14 +14,16 @@ class SimpleSentenceLessonBuilder:
         return self
 
     def create_dropDown(self):
-        dropdown = {}
+        dropdown = list()
         if len(self.words) > 0:
             for w in self.words:
                 word = Word.query.filter_by(word=w)
                 if word.count() > 0:
-                    dropdown.update({str(w): word.first().word_meaning})
+                    word = word.first()
+                    print(word.word_meaning+' '+word.audio)
+                    dropdown.append({str(w): word.word_meaning,'sound': word.audio})
 
-
+        print(dropdown)
         self.data['dropdown'] = dropdown
         return self
 

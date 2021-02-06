@@ -168,6 +168,8 @@ class UpdateGroupForm(FlaskForm):
 class LessonForm(FlaskForm):
     sentence = StringField("Sentence", validators=[DataRequired()])
     translation = StringField("Translation", validators=[DataRequired()])
+    m_f_n = SelectField("Sentence type", choices=[('N', 'Neutral'), ('M', 'Masculine'), ('F', 'Feminine')],
+                        validators=[DataRequired()])
     submit = SubmitField("Add")
 
 

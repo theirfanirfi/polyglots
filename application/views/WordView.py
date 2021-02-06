@@ -3,13 +3,8 @@ from application.models.models import *
 from flask import render_template, request
 from application import db
 from flask import redirect, url_for
-from application.forms.forms import (ContinentForm, UpdateContinentForm, CountryForm,
-UpdateCountryForm, LanguageForm, UpdateLanguageForm, LevelForm, UpdateLevelForm, GroupForm,
-UpdateGroupForm, LessonForm, UpdateLessonForm, LoginForm, SignupForm, WordForm, UpdateWordForm)
+from application.forms.forms import WordForm, UpdateWordForm
 from application.utils import save_file,save_image
-from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import LoginManager,UserMixin,login_user,login_required,logout_user,current_user
-from application import login_manager
 
 class WordView(FlaskView):
 	@route('/',methods=['GET','POST'])

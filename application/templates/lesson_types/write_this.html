@@ -15,28 +15,65 @@
 
             <div class="form-group row">
                 <label>Write this in _____ ? (e.g. in English, Russian)</label>
+                <input type="text" placeholder="Write this in ____ ?" name="write_this" class="form-control" required/>
+            </div>
+
+            <div class="form-group row">
+                <label>Sentence to write</label>
                 <input type="text" name="sentence" class="form-control" required/>
+            </div>
+
+            <div class="form-group row">
+                <label>Real Meaning <span style="color:red;">Leave empty, if you don't want to add</span></label>
+                <input type="text" name="real_meaning" id="real_meaning" class="form-control"/>
+            </div>
+
+            <div class="form-group row">
+                <label>Secondary Meaning <span style="color:red;">Leave empty, if you don't want to add</span></label>
+                <input type="text" name="secondary_meaning" id="secondary_meaning" class="form-control"/>
+            </div>
+
+            <div class="form-group row">
+                <label>Sentence type</label>
+                <select class="form-control" name="sentence_type" required>
+                    <option value='N'>Neutral</option>
+                    <option value='N/P'>Neutral Plural</option>
+                    <option value='N/S'>Neutral Singular</option>
+                    <option value="M">Masculine</option>
+                    <option value="M/S">Masculine Singular</option>
+                    <option value="M/P">Masculine Plural</option>
+                    <option value="F">Feminine</option>
+                    <option value="F/S">Feminine Singular</option>
+                    <option value="F/P">Feminine Plural</option>
+                </select>
 
             </div>
 
 
             <div class="form-group row">
-                <label>Correct Sentence</label>
-                <input type="text" name="correct_sentence" class="form-control" required/>
+                <label style="color:green;">Correct Sentence</label>
+                <input style="color:green;font-weight:bold;" type="text" name="correct_sentence" class="form-control" required/>
 
             </div>
 
             <div class="form-group row">
                 <label>Sound</label>
-                <input type="file" name="sound" class="form-control" required/>
+                <input type="file" name="sound" class="form-control"/>
 
             </div>
 
             <div class="form-group row">
                 <label>Words - separated by semicolon(;) for tags</label>
-                <input type="text" placeholder="words separated by semicolon (;)" name="tags" id="tags_write" class="form-control" required/>
+                <input type="text" placeholder="words separated by semicolon (;)" name="tags" id="tags_write"
+                       class="form-control" required/>
                 <div class="row" id="writeThisTags"></div>
                 <div class="row" id="writeThisTagsWords"></div>
+
+            </div>
+
+            <div class="form-group row">
+                <label>Answer to type?</label>
+                <input type="checkbox" name="answer_to_type" id="answer_to_type" class=""/>
 
             </div>
             <div class="form-group row">

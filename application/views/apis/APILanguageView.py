@@ -44,7 +44,7 @@ class APILanguageView(FlaskView):
             data["level"] = LevelSchema(many=False).dump(level)
             groups_sql = text(
                 "SELECT *, (select count(*) from lessons where lessons.group_id=groups.group_id) as total_lessons"
-                + " FROM groups LEFT JOIN lessons on lessons.group_id = groups.group_id WHERE level_id = "
+                + " FROM groups WHERE level_id = "
                 + str(level.level_id)
                 + " AND groups.language_id="
                 + str(level.language_id)
