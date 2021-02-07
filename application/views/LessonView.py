@@ -18,10 +18,6 @@ class LessonView(FlaskView):
         group = Groups.query.get_or_404(id)
         lessons = SentenceLesson.query.filter_by(group_id=id).all()
         form = QuestionnaireForm()
-        form.group_id.data = group.group_id
-        questionnaire = Questionnaire.query.filter_by(group_id=group.group_id)
-        if questionnaire.count() > 0:
-            form.questionnaire.data = questionnaire.first().q_tags
 
         if request.method == "POST":
             areWordsInserted, howManyInserted, totalWords = process_lesson(request, group)

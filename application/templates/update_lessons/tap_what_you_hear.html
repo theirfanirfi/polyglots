@@ -1,0 +1,40 @@
+<section class="box">
+
+    <header class="panel_header">
+        <h2 class="title pull-left">Tap What you hear</h2>
+        <div class="actions panel_actions pull-right">
+            <i class="box_toggle fa fa-chevron-down"></i>
+            <i class="box_close fa fa-times"></i>
+        </div>
+    </header>
+    <div class="content-body">
+        <form action="{{url_for('LessonView:tap_what_you_hear')}}" method="POST"
+              enctype="multipart/form-data">
+            {{ form.csrf_token }}
+                            <input type="hidden" value="{{group.group_id}}" name="group_id">
+
+            <div class="form-group row">
+                <label>Sound for Taping</label>
+                <input type="file" name="sound" class="form-control" required/>
+
+            </div>
+
+            <div class="form-group row">
+                <label style="color:green;">Correct Word/Sentence</label>
+                <input style="color:green;font-weight:bold;" type="text" placeholder="Correct...." name="correct_option" id="" class="form-control" required/>
+            </div>
+            <div class="form-group row">
+                <label>Words Separated by semicolon(;)</label>
+                <input type="text" placeholder="words separated by semicolon (;)" name="tags" id="tap_tags"
+                       class="form-control"
+                       required/>
+                <div class="row" id="tapTagsDiv"></div>
+                <div class="row" id="tapWordsDiv"></div>
+            </div>
+            <div class="form-group row">
+
+                {{form.submit(class="btn btn-primary")}}
+            </div>
+        </form>
+    </div>
+</section>
