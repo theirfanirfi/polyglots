@@ -1,65 +1,104 @@
-<section class="box">
+{% extends "base.html" %}
+{% block body %}
+<section class="wrapper main-wrapper" style=''>
 
-    <header class="panel_header">
-        <h2 class="title pull-left">Images Lesson</h2>
-        <div class="actions panel_actions pull-right">
-            <i class="box_toggle fa fa-chevron-down"></i>
-            <i class="box_close fa fa-times"></i>
+    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+        <div class="page-title">
+
+            <div class="pull-left">
+                <h1 class="title">Update Lesson</h1>
+            </div>
+
         </div>
-    </header>
-    <div class="content-body">
-        <form action="{{url_for('LessonView:images_lesson')}}" method="POST"
-              enctype="multipart/form-data">
-            {{ form.csrf_token }}
-            <input type="hidden" name="group_id" value="{{group.group_id}}" required/>
-            <div class="form-group row">
-                <label>Sentence</label>
-                <input type="text" name="sentence" id="four_image_sentence" class="form-control" required/>
-                <div class="row four_lesson_words_display_div"></div>
-            </div>
+    </div>
+    <div class="clearfix"></div>
 
-            <div class="form-group row">
-                <label>Sentence type</label>
-                <select class="form-control" name="sentence_type" required>
-                    <option value='N'>Neutral</option>
-                    <option value='N/P'>Neutral Plural</option>
-                    <option value='N/S'>Neutral Singular</option>
-                    <option value="M">Masculine</option>
-                    <option value="M/S">Masculine Singular</option>
-                    <option value="M/P">Masculine Plural</option>
-                    <option value="F">Feminine</option>
-                    <option value="F/S">Feminine Singular</option>
-                    <option value="F/P">Feminine Plural</option>
-                </select>
+    <div class="col-lg-12">
+        <section class="box">
 
-            </div>
-
-            <div class="form-group row">
-                <label style="color:green;">Correct Option</label>
-                <input type="text" style="color:green;font-weight:bold;" name="correct_option" id="correct_option" class="form-control" required/>
-                <div class="row four_lesson_words_display_div"></div>
-            </div>
-
-            <h5>Images</h5>
-            <div id="imagesDiv">
-                <Button class="btn btn-info" id="createImageField">Create another Image Field</Button>
-                <div class="form-group row">
-                    <label>Image </label>
-                    <input type="file" name="image[]" class="form-control" required/>
+            <header class="panel_header">
+                <h2 class="title pull-left">Images Lesson</h2>
+                <div class="actions panel_actions pull-right">
+                    <i class="box_toggle fa fa-chevron-down"></i>
+                    <i class="box_close fa fa-times"></i>
                 </div>
-                <div class="form-group row">
-                    <label>Image Bottom Word</label>
-                    <input type="text" name="bottom_word[]" class="form-control bottom_word" required/>
-                    <div class="row four_lesson_words_display_div"></div>
-                </div>
+            </header>
+            <div class="content-body">
+                <form action="{{url_for('UpdateLessonView:images_lesson', id=lesson.lesson_id)}}" method="POST"
+                      enctype="multipart/form-data">
+                    {{ form.csrf_token }}
+                    <input type="hidden" name="group_id" value="{{group.group_id}}" required/>
+                    <div class="form-group row">
+                        <label>Sentence</label>
+                        <input type="text" value="{{lesson.sentence}}" name="sentence" id="four_image_sentence"
+                               class="form-control" required/>
+                        <div class="row four_lesson_words_display_div"></div>
+                    </div>
 
+                    <div class="form-group row">
+                        <label>Sentence type</label>
+                        <select class="form-control" name="sentence_type" required>
+                            <option value='N' {% if lesson.masculine_feminine_neutral==
+                            "N" %} selected {% endif %}>Neutral</option>
+                            <option value='N/P' {% if lesson.masculine_feminine_neutral==
+                            "N/P" %} selected {% endif %}>Neutral Plural</option>
+                            <option value='N/S' {% if lesson.masculine_feminine_neutral==
+                            "N/S" %} selected {% endif %}>Neutral Singular</option>
+                            <option value="M" {% if lesson.masculine_feminine_neutral==
+                            "M" %} selected {% endif %}>Masculine</option>
+                            <option value="M/S" {% if lesson.masculine_feminine_neutral==
+                            "M/S" %} selected {% endif %}>Masculine Singular</option>
+                            <option value="M/P" {% if lesson.masculine_feminine_neutral==
+                            "M/P" %} selected {% endif %}>Masculine Plural</option>
+                            <option value="F" {% if lesson.masculine_feminine_neutral==
+                            "F" %} selected {% endif %}>Feminine</option>
+                            <option value="F/S" {% if lesson.masculine_feminine_neutral==
+                            "F/S" %} selected {% endif %}>Feminine Singular</option>
+                            <option value="F/P" {% if lesson.masculine_feminine_neutral==
+                            "F/P" %} selected {% endif %}>Feminine Plural</option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label style="color:green;">Correct Option</label>
+                        <input value="{{lesson.translation}}" type="text" style="color:green;font-weight:bold;" name="correct_option"
+                               id="correct_option" class="form-control" required/>
+                        <div class="row four_lesson_words_display_div"></div>
+                    </div>
+
+                    <h5>Images</h5>
+                    <div id="imagesDiv">
+                        <Button class="btn btn-info" id="createImageField">Create another Image Field</Button>
+                        {% for image in images %}
+                        <div style="border-bottom:1px solid black;margin:12px;">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <img src="{{url_for('static', filename='lesson')}}/{{image}}" class="img-responsive">
+                                </div>
+                            </div>
+                        <div class="form-group row">
+                            <label>Image</label>
+                            <input type="file" name="image[]" class="form-control"/>
+                        </div>
+                        <div class="form-group row">
+                            <label>Image Bottom Word</label>
+                            <input value="{{words[loop.index-1]}}" type="text" name="bottom_word[]" class="form-control bottom_word" required/>
+                            <div class="row four_lesson_words_display_div"></div>
+                        </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="form-group row">
+
+                        {{form.submit(class="btn btn-primary", value='Update')}}
+                    </div>
+
+                </form>
             </div>
-
-            <div class="form-group row">
-
-                {{form.submit(class="btn btn-primary")}}
-            </div>
-
-        </form>
+        </section>
     </div>
 </section>
+{% endblock %}
