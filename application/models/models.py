@@ -92,20 +92,23 @@ class Advertisements(db.Model):
     ad_id = db.Column(db.Integer, primary_key=True)
     ad_name = db.Column(db.String(200), nullable=False)
     ad_image = db.Column(db.Text, nullable=False)
-    ad_age = db.Column(db.Integer, nullable=False)
+    ad_upper_limit_age = db.Column(db.Integer, nullable=False)
+    ad_lower_limit_age = db.Column(db.Integer, nullable=False)
     ad_continent = db.Column(db.String(100), nullable=False)
     ad_gender = db.Column(db.String(20), nullable=False)
     is_bottom_ad = db.Column(db.Integer, default=0)
     ad_link = db.Column(db.Text, nullable=True)
 
+
     @staticmethod
     def newAd(
-        ad_name, ad_image, ad_age, ad_continent, ad_gender, is_bottom_ad, ad_link
+            ad_name, ad_image, ad_lower_limit_age,ad_upper_limit_age, ad_continent, ad_gender, is_bottom_ad, ad_link
     ):
         ad = Advertisements()
         ad.ad_name = ad_name
         ad.ad_image = ad_image
-        ad.ad_age = ad_age
+        ad.ad_lower_limit_age = ad_lower_limit_age
+        ad.ad_upper_limit_age = ad_upper_limit_age
         ad.ad_continent = ad_continent
         ad.ad_gender = ad_gender
         ad.ad_link = ad_link
@@ -241,7 +244,7 @@ class Word(db.Model):
 
     @staticmethod
     def check_word_in_db(
-        wordd=None, meanings=None, wordAudio=None, image=None, lang_id=None
+            wordd=None, meanings=None, wordAudio=None, image=None, lang_id=None
     ):
         check = Word.query.filter_by(word=wordd, language_id=lang_id)
         if check.count() > 0:
@@ -284,7 +287,10 @@ class LessonSchema(ma.Schema):
             "language_id",
             "group_id",
             "masculine_feminine_neutral",
-            "write_this_in_sentence"
+            "write_this_in_sentence",
+            "is_type_answer",
+            "real_meaning",
+            "secondary_meaning",
         )
 
 
@@ -363,6 +369,7 @@ class TapWhatYouHear(Lessons):
 class Questionnaire(db.Model):
     __tablename__ = "questionnaires"
     q_id = db.Column(db.Integer, primary_key=True)
+    q_question = db.Column(db.String(200), nullable=False)
     q_tags = db.Column(db.String(200), nullable=False)
     group_id = db.Column(db.Integer, default=0)
     level_id = db.Column(db.Integer, default=0)

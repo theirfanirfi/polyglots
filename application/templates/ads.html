@@ -14,7 +14,7 @@
     <div class="clearfix"></div>
 
     <div class="col-lg-12">
-        <section class="box nobox">
+        <div class="box nobox">
             <div class="content-body">
                 <div class="row">
                     <form action="{{url_for('AdsView:add_ad')}}" method="post" enctype="multipart/form-data">
@@ -108,9 +108,12 @@
                             <div class="row">
                                 <div class="form-group">
                                     {{form.submit(class_='btn btn-primary')}}
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
-            </div>
+        </div>
     </div>
     <div class="col-md-3 col-sm-12 col-xs-12">
 
@@ -168,7 +171,7 @@
     </div>
     </div>
     </div>
-</section>
+</div>
 
 
 </section>

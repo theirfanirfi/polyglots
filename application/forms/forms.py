@@ -8,6 +8,7 @@ from wtforms import (
     TextAreaField,
     BooleanField,
     HiddenField,
+FieldList
 )
 from wtforms.validators import DataRequired, Email, Length, InputRequired
 from application.models.models import *
@@ -64,7 +65,8 @@ class CountryForm(FlaskForm):
 
 class AdsForm(FlaskForm):
     ads_name = StringField("Ad Name", validators=[DataRequired()])
-    ad_age = StringField("Age", validators=[DataRequired()])
+    ad_upper_limit_age = StringField("Age Upper Limit", validators=[DataRequired()])
+    ad_lower_limit_age = StringField("Age Lower Limit", validators=[DataRequired()])
     ad_link = StringField("Ad Link", validators=[DataRequired()])
 
     ad_continent = SelectField(
@@ -85,7 +87,7 @@ class AdsForm(FlaskForm):
         validators=[DataRequired()],
     )
     image = FileField(
-        "Ad Image", validators=[FileAllowed(["png", "jpg", "jpeg", "gif"])]
+        "Ad Image/Video", validators=[FileAllowed(["png", "jpg", "jpeg", "gif","mp4","avi","flv","mov","wmv"])]
     )
     is_bottom_ad = BooleanField("Is Bottom Ad?")
     submit = SubmitField("Add")

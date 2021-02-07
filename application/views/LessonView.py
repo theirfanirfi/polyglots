@@ -4,7 +4,7 @@ from application.models.models import SentenceLesson, Groups, Lessons, MultipleI
 from flask import render_template, request, redirect, flash
 from application import db
 from flask import redirect, url_for
-from application.forms.forms import LessonForm, UpdateLessonForm, QuestionnaireForm
+from application.forms.forms import LessonForm, UpdateLessonForm, QuestionnaireForm, AdsForm
 from application.utils import process_lesson, save_file
 from sqlalchemy import text
 import json
@@ -54,7 +54,8 @@ class LessonView(FlaskView):
                 "FROM word as words WHERE language_id=" + str(group.language_id))
             # words = Word.query.filter_by(language_id=group.language_id).all()
             words = db.engine.execute(sql)
-            return render_template("lesson.html", form=form, lessons=lessons, group=group, words=words)
+            ad_form = AdsForm()
+            return render_template("lesson.html", form=form,ad_form=ad_form, lessons=lessons, group=group, words=words)
 
     @route("/delete_lesson/<int:id>")
     def delete_lesson(self, id):

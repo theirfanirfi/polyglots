@@ -1,5 +1,5 @@
 from flask_classful import FlaskView, route
-from application.models.models import Advertisements
+from application.models.models import Advertisements, Questionnaire, Groups
 from flask import render_template, request, flash
 from application import db
 from flask import redirect, url_for
@@ -15,7 +15,13 @@ class AdsView(FlaskView):
 
     @route("add_ad", methods=["POST"])
     def add_ad(self):
+        group = Groups.query.get_or_404(request.form['group_id'])
         form = AdsForm()
+        q_form = request.form
+
+        questionnaire_questions = q_form.getlist('questionnaire_question[]')
+        questionnaire_questions_tags = q_form.getlist('questionnaire_tags[]')
+
         if form.validate_on_submit():
             isSaved, file_name = save_file(form.image.data, "ads")
             if not isSaved:
@@ -24,7 +30,8 @@ class AdsView(FlaskView):
             ads = Advertisements.newAd(
                 ad_name=form.ads_name.data,
                 ad_image=file_name,
-                ad_age=form.ad_age.data,
+                ad_lower_limit_age=form.ad_lower_limit_age.data,
+                ad_upper_limit_age=form.ad_upper_limit_age.data,
                 ad_link=form.ad_link.data,
                 ad_continent=form.ad_continent.data,
                 ad_gender=form.ad_gender.data,
@@ -34,18 +41,33 @@ class AdsView(FlaskView):
             try:
                 db.session.add(ads)
                 db.session.commit()
-                print("added")
+                print("ad added added")
+                for i, question in enumerate(questionnaire_questions):
+                    q = Questionnaire()
+                    q.q_question = questionnaire_questions[i]
+                    q.q_tags = questionnaire_questions_tags[i]
+                    q.language_id = group.language_id
+                    q.group_id = group.group_id
+                    q.level_id = group.level_id
+                    try:
+                        db.session.add(q)
+                        db.session.commit()
+                    except Exception as e:
+                        print("Questionnaire: "+e)
+                        return str(e)
+
                 flash("Ad added.", "success")
-                return redirect(url_for("AdsView:index"))
+                return redirect(request.referrer)
             except Exception as e:
                 print(e)
+                return str(e)
                 print("not added")
                 flash("Error occurred", "danger")
-                return redirect(url_for("AdsView:index"))
+                return redirect(request.referrer)
 
         else:
-            ads = Advertisements.query.all()
-            return render_template("ads.html", form=form, ads=ads)
+            flash("Error occurred", "danger")
+            return redirect(request.referrer)
 
     @route("update_ad/<int:ad_id>", methods=["GET", "POST"])
     def update_ad(self, ad_id):

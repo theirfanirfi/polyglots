@@ -97,6 +97,19 @@ function createImageWithBottomTextForImagesLesson() {
 
 }
 
+function createQuestionnaireField() {
+    var field = "";
+    field += '<div class="form-group">';
+    field += '<label>Question</label>';
+    field += '<input placeholder="Question" type="text" name="questionnaire_question[]" class="form-control"/>';
+    field += '</div>';
+    field += '<div class="form-group">';
+    field += ' <label>Question tags, separated by semicolon(;)</label>';
+    field += '<input placeholder="Question tags, separated by semicolon(;)" type="text" name="questionnaire_tags[]" class="form-control"/>';
+    field += '</div>';
+    return field;
+}
+
 $(document).ready(function () {
     //sentence
     var sentence_field = $('#sentence');
@@ -257,6 +270,16 @@ $(document).ready(function () {
                 checkWordRepeatition(index, element);
             });
         }
+    });
+
+
+
+    //questionnaire and Ad
+
+    var add_field_btn = $('#add_ad_field')
+    var ad_fields_div = $('#ad_fields_div')
+    add_field_btn.click(function () {
+        ad_fields_div.append(createQuestionnaireField())
     });
 
 

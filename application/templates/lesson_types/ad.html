@@ -1,0 +1,137 @@
+<div class="col-lg-12">
+    <div class="box nobox">
+        <div class="content-body">
+            <div class="row">
+                <form action="{{url_for('AdsView:add_ad')}}" method="post" enctype="multipart/form-data">
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                        <div class="row">
+                            <input type="hidden" name="group_id" value="{{group.group_id}}">
+                            <div class="form-group">
+                                {{ ad_form.csrf_token }}
+                                {{ad_form.ads_name.label}}
+                                {{ad_form.ads_name(class_='form-control')}}
+                                {% if ad_form.ads_name.errors %}
+                                {% for error in ad_form.ads_name.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                {{ad_form.ad_upper_limit_age.label}}
+                                {{ad_form.ad_upper_limit_age(class_='form-control')}}
+                                {% if ad_form.ad_upper_limit_age.errors %}
+                                {% for error in ad_form.ad_upper_limit_age.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 form-group">
+                                {{ad_form.ad_lower_limit_age.label}}
+                                {{ad_form.ad_lower_limit_age(class_='form-control')}}
+                                {% if ad_form.ad_lower_limit_age.errors %}
+                                {% for error in ad_form.ad_lower_limit_age.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                {{ad_form.ad_gender.label}}
+                                {{ad_form.ad_gender(class_='form-control')}}
+                                {% if ad_form.ad_gender.errors %}
+                                {% for error in ad_form.ad_gender.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                {{ad_form.ad_continent.label}}
+                                {{ad_form.ad_continent(class_='form-control')}}
+                                {% if ad_form.ad_continent.errors %}
+                                {% for error in ad_form.ad_continent.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                {{ad_form.ad_link.label}}
+                                {{ad_form.ad_link(class_='form-control')}}
+                                {% if ad_form.ad_link.errors %}
+                                {% for error in ad_form.ad_link.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                {{ad_form.image.label}}
+                                {{ad_form.image(class_='form-control')}}
+                                {% if ad_form.image.errors %}
+                                {% for error in ad_form.image.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                {{ad_form.is_bottom_ad.label}}
+                                {{ad_form.is_bottom_ad()}}
+                                {% if ad_form.is_bottom_ad.errors %}
+                                {% for error in ad_form.is_bottom_ad.errors %}
+                                <p style="color:red;">{{error}}</p>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <h3>Ad Questionnaire</h3>
+                        </div>
+                        <div class="row">
+                            <button onclick="return false;" id="add_ad_field" class="btn-sm btn-primary"><i class="fa fa-plus"></i> Add Field
+                            </button>
+                        </div>
+
+                        <div class="row" style="margin-top:12px;" id="ad_fields_div">
+                            <div class="form-group">
+                                <label>Question</label>
+                                <input placeholder="Question" type="text" name="questionnaire_question[]" class="form-control"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Question tags, separated by semicolon(;)</label>
+                                <input
+                                        placeholder="Question tags, separated by semicolon(;)"
+                                        type="text"
+                                        name="questionnaire_tags[]"
+                                        class="form-control"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                {{ad_form.submit(class_='btn btn-primary')}}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
