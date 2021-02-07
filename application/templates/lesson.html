@@ -23,7 +23,7 @@
                 {% include "lesson_types/write_this.html" %}
                 {% include "lesson_types/pairs_to_match.html" %}
                 {% include "lesson_types/tap_what_you_hear.html" %}
-<!--                {% include "questionnaire/questionnaire.html" %}-->
+                <!--                {% include "questionnaire/questionnaire.html" %}-->
                 {% include "lesson_types/ad.html" %}
             </div>
 
@@ -103,7 +103,22 @@
                                     <td><p>{{lesson.translation}}
                                         <p></td>
                                     <td>
-                                        <a href="{{url_for('LessonView:update_lesson',id=lesson.lesson_id)}}"
+                                        <a href="
+                                        {% if lesson.is_straight_translation == 1 %}
+                                        {{url_for('UpdateLessonView:sentence_translation',id=lesson.lesson_id)}}
+                                        {% elif lesson.is_multiple_images == 1 %}
+                                        {{url_for('UpdateLessonView:images_lesson',id=lesson.lesson_id)}}
+                                        {% elif lesson.is_single_image == 1 %}
+                                        {{url_for('UpdateLessonView:single_image_lesson',id=lesson.lesson_id)}}
+                                        {% elif lesson.is_pairs_to_match == 1 %}
+                                        {{url_for('UpdateLessonView:pairs_to_match',id=lesson.lesson_id)}}
+                                        {% elif lesson.is_write_this == 1 %}
+                                        {{url_for('UpdateLessonView:write_this',id=lesson.lesson_id)}}
+                                         {% elif lesson.is_tap_what_you_hear == 1 %}
+                                        {{url_for('UpdateLessonView:tap_what_you_hear',id=lesson.lesson_id)}}
+                                        {% endif %}
+
+"
                                            class="btn btn-info">Update</a>
                                     </td>
                                     <td>

@@ -43,6 +43,7 @@ from application.views.LessonView import LessonView
 from application.views.UserView import UserView
 from application.views.WordView import WordView
 from application.views.AdsView import AdsView
+from application.views.UpdateLessonView import UpdateLessonView
 
 ##apis import
 from application.views.apis.LessonView import APILessonView
@@ -60,6 +61,7 @@ LessonView.register(app, route_base="/admin/lessons")
 UserView.register(app, route_base="/admin/users")
 WordView.register(app, route_base="/admin/words")
 AdsView.register(app, route_base="/admin/ads")
+UpdateLessonView.register(app, route_base="/admin/update")
 
 ####### apis
 APILessonView.register(app, route_base="/api/lessons")
