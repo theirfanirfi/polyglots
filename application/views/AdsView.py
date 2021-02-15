@@ -1,6 +1,6 @@
 from flask_classful import FlaskView, route
-from application.models.models import Advertisements, Questionnaire, Groups
-from flask import render_template, request, flash
+from application.models.models import Advertisements, Questionnaire, Groups, Continents, Countries, Language
+from flask import render_template, request, flash, jsonify
 from application import db
 from flask import redirect, url_for
 from application.forms.forms import AdsForm
@@ -8,24 +8,90 @@ from application.utils import save_file
 
 
 class AdsView(FlaskView):
+    @route('/', methods=['POST','GET'])
     def index(self):
         form = AdsForm()
         ads = Advertisements.query.all()
-        return render_template("ads.html", form=form, ads=ads)
+        continents = Continents.query.all()
+        form.ad_languages.choices = Language.getLanguagesForSelectField()
+
+        if request.method == "GET":
+            return render_template("ads.html", ad_form=form, ads=ads,
+                                   continents=continents)
+        elif request.method == "POST":
+            q_form = request.form
+            print(q_form)
+            questionnaire_questions = q_form.getlist('questionnaire_question[]')
+            questionnaire_questions_tags = q_form.getlist('questionnaire_tags[]')
+            questionnaire_answer_to_write = q_form.getlist('answer_to_write[]')
+
+            if form.validate_on_submit():
+                print('validated')
+                isSaved, file_name = save_file(form.image.data, "ads")
+                if not isSaved:
+                    return "Ad image/Video not uploaded, please try again."
+
+                ads = Advertisements.newAd(
+                    ad_name=form.ads_name.data,
+                    ad_image=file_name,
+                    ad_lower_limit_age=form.ad_lower_limit_age.data,
+                    ad_upper_limit_age=form.ad_upper_limit_age.data,
+                    ad_link=form.ad_link.data,
+                    ad_continent=form.ad_continent.data,
+                    ad_gender=form.ad_gender.data,
+                    is_bottom_ad=form.is_bottom_ad.data,
+                    country=form.ad_country.data,
+                    language_id=form.ad_languages.data,
+                )
+
+                try:
+                    db.session.add(ads)
+                    db.session.commit()
+                    print("Advertisement added added")
+                    for i, question in enumerate(questionnaire_questions):
+                        q = Questionnaire()
+                        q.q_question = questionnaire_questions[i]
+                        q.q_tags = questionnaire_questions_tags[i]
+                        q.is_answer_to_write = 0 if questionnaire_answer_to_write[i] is None else 1
+                        q.ad_id = ads.ad_id
+                        try:
+                            db.session.add(q)
+                            db.session.commit()
+                        except Exception as e:
+                            print("Questionnaire: " + e)
+
+                    flash("Ad added.", "success")
+                    return redirect(request.referrer)
+                except Exception as e:
+                    print(e)
+                    return str(e)
+                    print("not added")
+                    flash("Error occurred", "danger")
+                    return redirect(request.referrer)
+
+            else:
+                print('not validate_on_submit')
+                flash("Error occurred", "danger")
+                return render_template("ads.html", ad_form=form, ads=ads,
+                                   continents=continents)
+
 
     @route("add_ad", methods=["POST"])
     def add_ad(self):
-        group = Groups.query.get_or_404(request.form['group_id'])
         form = AdsForm()
+        form.ad_continent.choices = Continents.getContinentsForSelectField()
+        form.ad_languages.choices = Language.getLanguagesForSelectField()
         q_form = request.form
 
         questionnaire_questions = q_form.getlist('questionnaire_question[]')
         questionnaire_questions_tags = q_form.getlist('questionnaire_tags[]')
+        questionnaire_answer_to_write = q_form.getlist('answer_to_write[]')
 
         if form.validate_on_submit():
+            print('validated')
             isSaved, file_name = save_file(form.image.data, "ads")
             if not isSaved:
-                return "Ad image not uploaded, please try again."
+                return "Ad image/Video not uploaded, please try again."
 
             ads = Advertisements.newAd(
                 ad_name=form.ads_name.data,
@@ -36,25 +102,25 @@ class AdsView(FlaskView):
                 ad_continent=form.ad_continent.data,
                 ad_gender=form.ad_gender.data,
                 is_bottom_ad=form.is_bottom_ad.data,
+                country=form.ad_country.data,
+                language_id=form.language_id.data,
             )
 
             try:
                 db.session.add(ads)
                 db.session.commit()
-                print("ad added added")
+                print("Advertisement added added")
                 for i, question in enumerate(questionnaire_questions):
                     q = Questionnaire()
                     q.q_question = questionnaire_questions[i]
                     q.q_tags = questionnaire_questions_tags[i]
-                    q.language_id = group.language_id
-                    q.group_id = group.group_id
-                    q.level_id = group.level_id
+                    q.is_answer_to_write = 0 if questionnaire_answer_to_write[i] is None else 1
+                    q.ad_id = ads.ad_id
                     try:
                         db.session.add(q)
                         db.session.commit()
                     except Exception as e:
                         print("Questionnaire: "+e)
-                        return str(e)
 
                 flash("Ad added.", "success")
                 return redirect(request.referrer)
@@ -66,8 +132,10 @@ class AdsView(FlaskView):
                 return redirect(request.referrer)
 
         else:
+            print('not validate_on_submit')
             flash("Error occurred", "danger")
-            return redirect(request.referrer)
+            ads = Advertisements.query.all()
+            return render_template("ads.html", ad_form=form, ads=ads)
 
     @route("update_ad/<int:ad_id>", methods=["GET", "POST"])
     def update_ad(self, ad_id):
@@ -126,3 +194,20 @@ class AdsView(FlaskView):
         except:
             flash("Error occurred in deleting the ad. Please try again.", "danger")
             return redirect(url_for("AdsView:index"))
+
+    @route("/get_continent_countries")
+    def get_continent_countries(self):
+        code = request.args.get("code")
+
+        if code is None or code == "":
+            return str('Invalid code')
+
+        countries = Countries.query.filter_by(continent_code=code).all()
+        data = list()
+        for c in countries:
+            country = dict()
+            country['code'] = c.code
+            country['name'] = c.name
+            data.append(country)
+
+        return jsonify(data)

@@ -15,18 +15,16 @@ from application import login_manager
 
 
 class LanguageView(FlaskView):
-    @route("/language/<int:id>", methods=["GET", "POST"])
-    def language(self, id):
+    @route("/language", methods=["GET", "POST"])
+    def language(self):
         form = LanguageForm()
-        country = Countries.query.get_or_404(id)
-        languages = Language.query.filter_by(country_id=id).all()
+        languages = Language.query.all()
         if request.method == "POST":
             if form.validate_on_submit():
                 isSaved, file_name = save_file(form.lang_image.data, "language")
                 new_language = Language(
                     language_name=form.lang_name.data,
                     language_image=file_name,
-                    country_id=country.country_id,
                 )
                 try:
                     db.session.add(new_language)
@@ -36,11 +34,11 @@ class LanguageView(FlaskView):
                     return "There was an issue in adding the language" + str(e)
             else:
                 return render_template(
-                    "language.html", form=form, country=country, languages=languages
+                    "all_languages.html", form=form, languages=languages
                 )
         else:
             return render_template(
-                "language.html", form=form, country=country, languages=languages
+                "all_languages.html", form=form, languages=languages
             )
 
     @route("/delete_language/<int:id>")
@@ -83,4 +81,7 @@ class LanguageView(FlaskView):
     @route("/")
     def languages(self):
         languages = Language.query.all()
-        return render_template("all_languages.html", languages=languages)
+        form = LanguageForm()
+        return render_template("all_languages.html",
+                               form=form,
+                               languages=languages)

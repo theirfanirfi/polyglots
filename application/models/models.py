@@ -1,6 +1,3 @@
-import sqlalchemy
-from sqlalchemy.orm import class_mapper
-
 from application import app, db, ma
 from flask_login import (
     UserMixin,
@@ -44,37 +41,30 @@ class UserSchema(ma.Schema):
 
 
 class Continents(db.Model):
-    continent_id = db.Column(db.Integer, primary_key=True)
-    continent_name = db.Column(db.String(200), nullable=False)
-    countries = db.relationship("Countries", backref="continents", lazy="dynamic")
-
-    def __repr__(self):
-        return "[Continents {}]".format(self.continent_name)
+    code = db.Column(db.String(200), nullable=False, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
 
     @staticmethod
     def getContinentsForSelectField():
         continents = Continents.query.all()
-        conts_s = [
-            (continent.continent_id, continent.continent_name)
-            for continent in continents
-        ]
+        conts_s = [(continent.code, continent.name) for continent in continents]
         return conts_s
 
 
 class Countries(db.Model):
     country_id = db.Column(db.Integer, primary_key=True)
-    country_name = db.Column(db.String(200), nullable=False)
-    country_image = db.Column(db.Text, nullable=False)
-    continent_id = db.Column(db.Integer, db.ForeignKey("continents.continent_id"))
-    language = db.relationship("Language", backref="countries", lazy="dynamic")
-
-    def __repr__(self):
-        return "[Countries {}]".format(self.country_name)
+    code = db.Column(db.String(4), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    full_name = db.Column(db.String(200), nullable=False)
+    iso3 = db.Column(db.String(4), nullable=False)
+    number = db.Column(db.String(4), nullable=False)
+    continent_code = db.Column(db.String(4), nullable=False)
+    display_order = db.Column(db.Integer, nullable=False)
 
     @staticmethod
     def getCountriesForSelectField():
         countries = Countries.query.all()
-        count_s = [(country.country_id, country.country_name) for country in countries]
+        count_s = [(country.code, country.name) for country in countries]
         return count_s
 
 
@@ -94,15 +84,21 @@ class Advertisements(db.Model):
     ad_image = db.Column(db.Text, nullable=False)
     ad_upper_limit_age = db.Column(db.Integer, nullable=False)
     ad_lower_limit_age = db.Column(db.Integer, nullable=False)
-    ad_continent = db.Column(db.String(100), nullable=False)
+    ad_continent = db.Column(db.String(100), default="global")
+    country = db.Column(db.String(100), default="global")
     ad_gender = db.Column(db.String(20), nullable=False)
     is_bottom_ad = db.Column(db.Integer, default=0)
+    group_id = db.Column(db.Integer, default=0)
+    language_id = db.Column(db.Integer, default=0)
     ad_link = db.Column(db.Text, nullable=True)
+
 
 
     @staticmethod
     def newAd(
-            ad_name, ad_image, ad_lower_limit_age,ad_upper_limit_age, ad_continent, ad_gender, is_bottom_ad, ad_link
+            ad_name, ad_image, ad_lower_limit_age,ad_upper_limit_age,
+            ad_continent, ad_gender, is_bottom_ad, ad_link,
+            country, language_id
     ):
         ad = Advertisements()
         ad.ad_name = ad_name
@@ -111,8 +107,11 @@ class Advertisements(db.Model):
         ad.ad_upper_limit_age = ad_upper_limit_age
         ad.ad_continent = ad_continent
         ad.ad_gender = ad_gender
+        ad.country = country
+        ad.language_id = language_id
         ad.ad_link = ad_link
         ad.is_bottom_ad = 1 if is_bottom_ad else 0
+
         return ad
 
 
@@ -127,6 +126,11 @@ class AdSchema(ma.Schema):
             "ad_gender",
             "is_bottom_ad",
             "ad_link",
+            "ad_upper_limit_age",
+            "ad_lower_limit_age",
+            "country",
+            "continent",
+            "language_id"
         )
 
 
@@ -143,7 +147,8 @@ class Language(db.Model):
     @staticmethod
     def getLanguagesForSelectField():
         langs = Language.query.all()
-        lang_s = [(lang.language_id, lang.language_name) for lang in langs]
+        lang_s =[(0,'Any')]
+        lang_s += [(lang.language_id, lang.language_name) for lang in langs]
         return lang_s
 
 
@@ -370,15 +375,14 @@ class Questionnaire(db.Model):
     __tablename__ = "questionnaires"
     q_id = db.Column(db.Integer, primary_key=True)
     q_question = db.Column(db.String(200), nullable=False)
-    q_tags = db.Column(db.String(200), nullable=False)
-    group_id = db.Column(db.Integer, default=0)
-    level_id = db.Column(db.Integer, default=0)
-    language_id = db.Column(db.Integer, default=0)
+    q_tags = db.Column(db.String(200), nullable=True)
+    is_answer_to_write = db.Column(db.Integer, default=0)
+    ad_id = db.Column(db.Integer, default=0)
 
 
 class QuestionnaireSchema(ma.Schema):
     class Meta:
-        fields = ("q_id", "q_tags", "group_id", "level_id", "language_id")
+        fields = ("q_id", "q_tags", "is_answer_to_write","ad_id")
 
 
 class Accomplishments(db.Model):

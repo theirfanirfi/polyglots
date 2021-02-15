@@ -20,10 +20,10 @@ class SimpleSentenceLessonBuilder:
                 word = Word.query.filter_by(word=w)
                 if word.count() > 0:
                     word = word.first()
-                    print(word.word_meaning+' '+word.audio)
-                    dropdown.append({str(w): word.word_meaning,'sound': word.audio})
+                    dropdown.append({str(w): word.word_meaning if word.word_meaning is not None else None,
+                                     'sound': word.audio if word.audio is not None else None,
+                                     'type': word.masculine_feminine_neutral if word.masculine_feminine_neutral is not None else None})
 
-        print(dropdown)
         self.data['dropdown'] = dropdown
         return self
 

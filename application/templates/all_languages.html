@@ -16,13 +16,31 @@
     <div class="col-lg-12">
         <section class="box nobox">
             <div class="content-body">
+
+                <div class="row">
+                    <h4 style="font-weight:bold;margin: 12px;">Add New language</h4>
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                        <form action="{{url_for('LanguageView:language')}}" method="POST"
+                              enctype="multipart/form-data">
+                            {{ form.csrf_token }}
+                            <div class="form-group">
+                                {{form.lang_name.label}} {{form.lang_name(class="form-control")}}<br>
+                            </div>
+                            <div class="form-group">
+                                {{ form.lang_image.label }}
+                                {{ form.lang_image(class="form-control") }}
+                            </div>
+                            {{form.submit(class="btn btn-primary")}}
+                        </form>
+                    </div>
+                </div>
                 <div class="row">
 
                     <div class="col-md-9 col-sm-12 col-xs-12">
-            
+
                     </div>
                     <div class="col-md-3 col-sm-12 col-xs-12">
-                      
+
                     </div>
 
                     <div class="clearfix"></div>
@@ -32,9 +50,9 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <form method="post" action="">
-                                     
+
                                     <div class="form-group">
-                                        
+
                                         <small class="form-text text-muted" style='color:red;'><!-- error1 --></small>
                                     </div>
 
@@ -43,7 +61,6 @@
                                         <small class="form-text text-muted" style='color:red;'><!-- error2 --></small>
 
                                     </div>
-
 
 
                                     <div class="form-group">
@@ -59,7 +76,7 @@
                                 <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0"
                                        width="100%">
                                     <thead>
-                                        
+
                                     <tr>
                                         <!-- <th>Page Title</th> -->
                                         <th>Language Name</th>
@@ -70,12 +87,15 @@
                                     </thead>
 
                                     <tbody>
-                                        {% for language in languages %}
+                                    {% for language in languages %}
                                     <tr>
-                                    
-                                        <td><a href="{{url_for('LevelView:level',id=language.language_id)}}">{{language.language_name}}</a></td>
-                                        <td><img height="60px" width="60px" class="img-responsive" src="{{url_for('static', filename='language/')}}{{language.language_image}}" alt="language image"></td>
-                                                                                <td>
+
+                                        <td><a href="{{url_for('LevelView:level',id=language.language_id)}}">{{language.language_name}}</a>
+                                        </td>
+                                        <td><img height="60px" width="60px" class="img-responsive"
+                                                 src="{{url_for('static', filename='language/')}}{{language.language_image}}"
+                                                 alt="language image"></td>
+                                        <td>
                                             <a href="{{url_for('LanguageView:update_language',id=language.language_id)}}"
                                                class="btn btn-info">Update</a>
                                         </td>
@@ -84,7 +104,7 @@
                                                class="btn btn-danger">Delete</a>
                                         </td>
                                     </tr>
-                                      {% endfor %}
+                                    {% endfor %}
                                     </tbody>
                                 </table>
 

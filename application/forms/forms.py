@@ -69,21 +69,15 @@ class AdsForm(FlaskForm):
     ad_lower_limit_age = StringField("Age Lower Limit", validators=[DataRequired()])
     ad_link = StringField("Ad Link", validators=[DataRequired()])
 
-    ad_continent = SelectField(
-        "Continent",
-        choices=[
-            ("America", "America"),
-            ("Africa", "Africa"),
-            ("Antartica", "Antartica"),
-            ("Europe", "Europe"),
-            ("Middle East", "Middle East"),
-            ("Asia", "Asia"),
-        ],
-        validators=[DataRequired()],
-    )
+    ad_continent = StringField("Continent",validators=[DataRequired()], render_kw={'list':'continentsList'})
+
+    ad_country = StringField("Continent Countries",render_kw={'list':'countriesList'})
+
+    ad_languages = SelectField("Language", validators=[DataRequired()], coerce=int)
+
     ad_gender = SelectField(
         "Gender",
-        choices=[("Male", "Male"), ("Female", "Female")],
+        choices=[("Male", "Male"), ("Female", "Female"), ("Both", "Both")],
         validators=[DataRequired()],
     )
     image = FileField(

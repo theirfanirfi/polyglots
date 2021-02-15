@@ -16,16 +16,43 @@
     <div class="col-lg-12">
         <div class="box nobox">
             <div class="content-body">
+
+
                 <div class="row">
-                    <form action="{{url_for('AdsView:add_ad')}}" method="post" enctype="multipart/form-data">
+                    <form action="{{url_for('AdsView:index')}}"
+                          method="post"
+                          enctype="multipart/form-data"
+                    >
                         <div class="col-md-9 col-sm-12 col-xs-12">
                             <div class="row">
                                 <div class="form-group">
-                                    {{ form.csrf_token }}
-                                    {{form.ads_name.label}}
-                                    {{form.ads_name(class_='form-control')}}
-                                    {% if form.ads_name.errors %}
-                                    {% for error in form.ads_name.errors %}
+                                    {{ ad_form.csrf_token }}
+                                    {{ad_form.ads_name.label}}
+                                    {{ad_form.ads_name(class_='form-control')}}
+                                    {% if ad_form.ads_name.errors %}
+                                    {% for error in ad_form.ads_name.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    {{ad_form.ad_upper_limit_age.label}}
+                                    {{ad_form.ad_upper_limit_age(class_='form-control')}}
+                                    {% if ad_form.ad_upper_limit_age.errors %}
+                                    {% for error in ad_form.ad_upper_limit_age.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-6 form-group">
+                                    {{ad_form.ad_lower_limit_age.label}}
+                                    {{ad_form.ad_lower_limit_age(class_='form-control')}}
+                                    {% if ad_form.ad_lower_limit_age.errors %}
+                                    {% for error in ad_form.ad_lower_limit_age.errors %}
                                     <p style="color:red;">{{error}}</p>
                                     {% endfor %}
                                     {% endif %}
@@ -34,10 +61,10 @@
 
                             <div class="row">
                                 <div class="form-group">
-                                    {{form.ad_age.label}}
-                                    {{form.ad_age(class_='form-control')}}
-                                    {% if form.ad_age.errors %}
-                                    {% for error in form.ad_age.errors %}
+                                    {{ad_form.ad_gender.label}}
+                                    {{ad_form.ad_gender(class_='form-control')}}
+                                    {% if ad_form.ad_gender.errors %}
+                                    {% for error in ad_form.ad_gender.errors %}
                                     <p style="color:red;">{{error}}</p>
                                     {% endfor %}
                                     {% endif %}
@@ -46,58 +73,16 @@
 
                             <div class="row">
                                 <div class="form-group">
-                                    {{form.ad_gender.label}}
-                                    {{form.ad_gender(class_='form-control')}}
-                                    {% if form.ad_gender.errors %}
-                                    {% for error in form.ad_gender.errors %}
-                                    <p style="color:red;">{{error}}</p>
-                                    {% endfor %}
-                                    {% endif %}
-                                </div>
-                            </div>
+                                    {{ad_form.ad_continent.label}}
+                                    {{ad_form.ad_continent(class_='form-control')}}
+                                    <datalist id="continentsList">
+                                        {% for c in continents %}
+                                        <option value="{{c.name}}">{{c.name}}</option>
+                                        {% endfor %}
 
-                            <div class="row">
-                                <div class="form-group">
-                                    {{form.ad_continent.label}}
-                                    {{form.ad_continent(class_='form-control')}}
-                                    {% if form.ad_continent.errors %}
-                                    {% for error in form.ad_continent.errors %}
-                                    <p style="color:red;">{{error}}</p>
-                                    {% endfor %}
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group">
-                                    {{form.ad_link.label}}
-                                    {{form.ad_link(class_='form-control')}}
-                                    {% if form.ad_link.errors %}
-                                    {% for error in form.ad_link.errors %}
-                                    <p style="color:red;">{{error}}</p>
-                                    {% endfor %}
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group">
-                                    {{form.image.label}}
-                                    {{form.image(class_='form-control')}}
-                                    {% if form.image.errors %}
-                                    {% for error in form.image.errors %}
-                                    <p style="color:red;">{{error}}</p>
-                                    {% endfor %}
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group">
-                                    {{form.is_bottom_ad.label}}
-                                    {{form.is_bottom_ad()}}
-                                    {% if form.is_bottom_ad.errors %}
-                                    {% for error in form.is_bottom_ad.errors %}
+                                    </datalist>
+                                    {% if ad_form.ad_continent.errors %}
+                                    {% for error in ad_form.ad_continent.errors %}
                                     <p style="color:red;">{{error}}</p>
                                     {% endfor %}
                                     {% endif %}
@@ -107,27 +92,126 @@
 
                             <div class="row">
                                 <div class="form-group">
-                                    {{form.submit(class_='btn btn-primary')}}
+                                    {{ad_form.ad_country.label}}
+                                    {{ad_form.ad_country(class_='form-control')}}
+                                    <datalist id="countriesList">
+
+                                    </datalist>
+                                    {% if ad_form.ad_country.errors %}
+                                    {% for error in ad_form.ad_country.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{ad_form.ad_languages.label}}
+                                    {{ad_form.ad_languages(class_='form-control')}}
+                                    {% if ad_form.ad_languages.errors %}
+                                    {% for error in ad_form.ad_languages.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{ad_form.ad_link.label}}
+                                    {{ad_form.ad_link(class_='form-control')}}
+                                    {% if ad_form.ad_link.errors %}
+                                    {% for error in ad_form.ad_link.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{ad_form.image.label}}
+                                    {{ad_form.image(class_='form-control')}}
+                                    {% if ad_form.image.errors %}
+                                    {% for error in ad_form.image.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{ad_form.is_bottom_ad.label}}
+                                    {{ad_form.is_bottom_ad()}}
+                                    {% if ad_form.is_bottom_ad.errors %}
+                                    {% for error in ad_form.is_bottom_ad.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <h3>Ad Questionnaire</h3>
+                            </div>
+                            <div class="row">
+                                <button onclick="return false;" id="add_ad_field" class="btn-sm btn-primary"><i
+                                        class="fa fa-plus"></i> Add Field
+                                </button>
+                            </div>
+
+                            <div class="row" style="margin-top:12px;" id="ad_fields_div">
+                                <div class="form-group">
+                                    <label>Question</label>
+                                    <input placeholder="Question" type="text" name="questionnaire_question[]"
+                                           class="form-control"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Answer to write ? </label>
+                                    <input
+                                            type="checkbox"
+                                            name="answer_to_write[]"/>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Question tags, separated by semicolon(;)</label>
+                                    <input
+                                            placeholder="Question tags, separated by semicolon(;)"
+                                            type="text"
+                                            name="questionnaire_tags[]"
+                                            class="form-control"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{ad_form.submit(class_='btn btn-primary')}}
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
+            </div>
+
+
         </div>
-    </div>
-    <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
 
-    </div>
+        </div>
 
-    <div class="clearfix"></div>
-    <br>
+        <div class="clearfix"></div>
+        <br>
 
 
-    <div class="row">
-        <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
 
-            <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0" width="100%">
-                <thead>
+                <table id="example-1" class="table table-striped dt-responsive display" cellspacing="0" width="100%">
+                    <thead>
 
                     <tr>
                         <!-- <th>Page Title</th> -->
@@ -139,17 +223,17 @@
                         <th>Update</th>
                         <th>Delete</th>
                     </tr>
-                </thead>
+                    </thead>
 
-                <tbody>
+                    <tbody>
                     {% for ad in ads %}
                     <tr>
 
                         <td>{{ad.ad_name}}</td>
                         <td><img height="40px" width="60px" class="img-responsive"
-                                src="{{url_for('static', filename='ads/')}}{{ad.ad_image}}" alt="ad image"></td>
+                                 src="{{url_for('static', filename='ads/')}}{{ad.ad_image}}" alt="ad image"></td>
                         <td>{{ad.ad_gender}}</td>
-                        <td>{{ad.ad_age}}</td>
+                        <!--                        <td>{{ad.ad_age}}</td>-->
                         <td>{{ad.ad_continent}}</td>
                         <td>
                             <a href="{{url_for('AdsView:update_ad',ad_id=ad.ad_id)}}" class="btn btn-info">Update</a>
@@ -159,20 +243,22 @@
                         </td>
                     </tr>
                     {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
 
+
+            </div>
 
         </div>
 
     </div>
-
     </div>
     </div>
     </div>
     </div>
-</div>
 
 
 </section>
+
+<script src="{{url_for('static', filename='ad_script.js')}}"></script>
 {% endblock %}

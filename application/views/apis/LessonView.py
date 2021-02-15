@@ -22,7 +22,8 @@ class APILessonView(FlaskView):
         if sentences.count() > 0:
             sentences = sentences.all()
             for s in sentences:
-                if s.is_straight_translation == 1 or s.is_multiple_images:
+                if s.is_straight_translation == 1 or s.is_multiple_images or s.is_write_this == 1:
+                    print('working ' + str(s.is_write_this == 1) + ' ' + str(s.is_write_this))
                     lesson = (
                         SimpleSentenceLessonBuilder(s)
                         .split_into_words()
@@ -48,21 +49,35 @@ class APILessonView(FlaskView):
         lessons = list()
         ls = LessonSchema()
         sentences = Lessons.query.filter_by(group_id=group_id)
-        questionnaire = Questionnaire.query.filter_by(group_id=group_id).first()
-        ads = Advertisements.query.filter(
-            user.age >= Advertisements.ad_age,
+        # questionnaire = Questionnaire.query.filter_by(group_id=group_id).first()
+
+        ad = Advertisements.query.filter(
+            user.age >= Advertisements.ad_lower_limit_age,
+            user.age <= Advertisements.ad_upper_limit_age,
             Advertisements.ad_gender == user.gender,
             Advertisements.is_bottom_ad == 0,
-        ).all()
+            Advertisements.group_id == group_id
+        ).first()
+        ad_ques = list()
+
+        if ad:
+            ad_ques = Questionnaire.query.filter_by(ad_id=ad.ad_id).all()
+            ad_ques = QuestionnaireSchema(many=True).dump(ad_ques)
+
+
+
+
         bottom_ads = Advertisements.query.filter(
-            user.age >= Advertisements.ad_age,
+            user.age >= Advertisements.ad_lower_limit_age,
+            user.age <= Advertisements.ad_upper_limit_age,
             Advertisements.ad_gender == user.gender,
             Advertisements.is_bottom_ad == 1,
+            Advertisements.group_id == group_id
         ).all()
         if sentences.count() > 0:
             sentences = sentences.all()
             for s in sentences:
-                if s.is_straight_translation == 1 or s.is_multiple_images:
+                if s.is_straight_translation == 1 or s.is_multiple_images or s.is_write_this == 1:
                     lesson = (
                         SimpleSentenceLessonBuilder(s)
                         .split_into_words()
@@ -77,8 +92,8 @@ class APILessonView(FlaskView):
                     lessons.append(data)
         response = {
             "lessons": lessons,
-            "questionnaire": QuestionnaireSchema(many=False).dump(questionnaire),
-            "ads": AdSchema(many=True).dump((ads)),
+            "questionnaire": ad_ques,
+            "ads": AdSchema(many=False).dump((ad)),
             "bottom_ads": AdSchema(many=True).dump((bottom_ads)),
         }
         return jsonify(response)
