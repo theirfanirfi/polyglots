@@ -199,3 +199,8 @@ class UpdateWordForm(FlaskForm):
     )
     audio = FileField("Sound", validators=[FileAllowed(["mp3", "wav", "dsd", "alac"])])
     submit = SubmitField("Update")
+
+
+class AdsSettingForm(FlaskForm):
+    show_ad_after = StringField("Show Ad after each ____ lesson(s)", validators=[DataRequired()])
+    submit = SubmitField("Update")

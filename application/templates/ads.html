@@ -19,11 +19,12 @@
 
 
                 <div class="row">
-                    <form action="{{url_for('AdsView:index')}}"
-                          method="post"
-                          enctype="multipart/form-data"
-                    >
-                        <div class="col-md-9 col-sm-12 col-xs-12">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+
+                        <form action="{{url_for('AdsView:index')}}"
+                              method="post"
+                              enctype="multipart/form-data"
+                        >
                             <div class="row">
                                 <div class="form-group">
                                     {{ ad_form.csrf_token }}
@@ -95,7 +96,7 @@
                                     {{ad_form.ad_country.label}}
                                     {{ad_form.ad_country(class_='form-control')}}
                                     <datalist id="countriesList">
-
+                                        <option value='continent'>All</option>
                                     </datalist>
                                     {% if ad_form.ad_country.errors %}
                                     {% for error in ad_form.ad_country.errors %}
@@ -192,8 +193,36 @@
                                     {{ad_form.submit(class_='btn btn-primary')}}
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-3">
+                        <h3>Settings</h3>
+
+                        <form action="{{url_for('AdsView:update_ad_setting')}}"
+                              method="post"
+                        >
+                            <div class="row">
+                                <div class="form-group">
+                                    {{ s_form.csrf_token }}
+                                    {{s_form.show_ad_after.label}}
+                                    {{s_form.show_ad_after(class_='form-control')}}
+                                    {% if s_form.show_ad_after.errors %}
+                                    {% for error in s_form.show_ad_after.errors %}
+                                    <p style="color:red;">{{error}}</p>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    {{s_form.submit(class_='btn btn-primary')}}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
 
@@ -220,7 +249,7 @@
                         <th>Gender</th>
                         <th>Age</th>
                         <th>Continent</th>
-                        <th>Update</th>
+                        <th>Country</th>
                         <th>Delete</th>
                     </tr>
                     </thead>
@@ -233,11 +262,12 @@
                         <td><img height="40px" width="60px" class="img-responsive"
                                  src="{{url_for('static', filename='ads/')}}{{ad.ad_image}}" alt="ad image"></td>
                         <td>{{ad.ad_gender}}</td>
-                        <!--                        <td>{{ad.ad_age}}</td>-->
+                        <td>>= {{ad.ad_lower_limit_age}} and <= {{ad.ad_upper_limit_age}}</td>
                         <td>{{ad.ad_continent}}</td>
-                        <td>
-                            <a href="{{url_for('AdsView:update_ad',ad_id=ad.ad_id)}}" class="btn btn-info">Update</a>
-                        </td>
+                        <td>{{ad.country}}</td>
+<!--                        <td>-->
+                        <!--                            <a href="{{url_for('AdsView:update_ad',ad_id=ad.ad_id)}}" class="btn btn-info">Update</a>-->
+                        <!--                        </td>-->
                         <td>
                             <a href="{{url_for('AdsView:delete_ad',id=ad.ad_id)}}" class="btn btn-danger">Delete</a>
                         </td>

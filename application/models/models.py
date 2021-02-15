@@ -64,7 +64,7 @@ class Countries(db.Model):
     @staticmethod
     def getCountriesForSelectField():
         countries = Countries.query.all()
-        count_s = [(country.code, country.name) for country in countries]
+        count_s = [(country.name, country.name) for country in countries]
         return count_s
 
 
@@ -92,11 +92,9 @@ class Advertisements(db.Model):
     language_id = db.Column(db.Integer, default=0)
     ad_link = db.Column(db.Text, nullable=True)
 
-
-
     @staticmethod
     def newAd(
-            ad_name, ad_image, ad_lower_limit_age,ad_upper_limit_age,
+            ad_name, ad_image, ad_lower_limit_age, ad_upper_limit_age,
             ad_continent, ad_gender, is_bottom_ad, ad_link,
             country, language_id
     ):
@@ -147,7 +145,7 @@ class Language(db.Model):
     @staticmethod
     def getLanguagesForSelectField():
         langs = Language.query.all()
-        lang_s =[(0,'Any')]
+        lang_s = [(0, 'Any')]
         lang_s += [(lang.language_id, lang.language_name) for lang in langs]
         return lang_s
 
@@ -382,7 +380,7 @@ class Questionnaire(db.Model):
 
 class QuestionnaireSchema(ma.Schema):
     class Meta:
-        fields = ("q_id", "q_tags", "is_answer_to_write","ad_id")
+        fields = ("q_id", "q_tags", "is_answer_to_write", "ad_id")
 
 
 class Accomplishments(db.Model):
@@ -393,3 +391,9 @@ class Accomplishments(db.Model):
     lesson_id = db.Column(db.Integer, default=0)
     language_id = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, default=0)
+
+
+class Settings(db.Model):
+    setting_id = db.Column(db.Integer, primary_key=True)
+    setting_type = db.Column(db.String(200), nullable=False)
+    setting_value = db.Column(db.String(200), nullable=False)

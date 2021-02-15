@@ -1,9 +1,10 @@
 from flask_classful import FlaskView, route
-from application.models.models import Advertisements, Questionnaire, Groups, Continents, Countries, Language
+from application.models.models import Advertisements, Questionnaire, Settings, \
+    Continents, Countries, Language
 from flask import render_template, request, flash, jsonify
 from application import db
 from flask import redirect, url_for
-from application.forms.forms import AdsForm
+from application.forms.forms import AdsForm, AdsSettingForm
 from application.utils import save_file
 
 
@@ -11,13 +12,18 @@ class AdsView(FlaskView):
     @route('/', methods=['POST','GET'])
     def index(self):
         form = AdsForm()
+        s_form = AdsSettingForm()
         ads = Advertisements.query.all()
         continents = Continents.query.all()
         form.ad_languages.choices = Language.getLanguagesForSelectField()
+        setting = Settings.query.filter_by(setting_type='ad')
+
+        if setting.count() > 0 :
+            s_form.show_ad_after.data = setting.first().setting_value
 
         if request.method == "GET":
             return render_template("ads.html", ad_form=form, ads=ads,
-                                   continents=continents)
+                                   continents=continents, s_form=s_form)
         elif request.method == "POST":
             q_form = request.form
             print(q_form)
@@ -73,7 +79,7 @@ class AdsView(FlaskView):
                 print('not validate_on_submit')
                 flash("Error occurred", "danger")
                 return render_template("ads.html", ad_form=form, ads=ads,
-                                   continents=continents)
+                                   continents=continents, s_form=s_form)
 
 
     @route("add_ad", methods=["POST"])
@@ -211,3 +217,30 @@ class AdsView(FlaskView):
             data.append(country)
 
         return jsonify(data)
+
+    @route('/update_ad_setting', methods=['GET', 'POST'])
+    def update_ad_setting(self):
+        form = AdsSettingForm()
+        setting = Settings.query.filter_by(setting_type='ad')
+        if setting.count() > 0 :
+            setting = setting.first()
+        else:
+            setting = Settings()
+
+        if request.method == "POST":
+            if form.validate_on_submit():
+                setting.setting_type = 'ad'
+                setting.setting_value = form.show_ad_after.data
+
+                try:
+                    db.session.add(setting)
+                    db.session.commit()
+                    return redirect(request.referrer)
+                except Exception as e:
+                    print(e)
+                    return redirect(request.referrer)
+            else:
+                return 'invalid request'
+        else:
+            return 'invalid request'
+

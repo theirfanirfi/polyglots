@@ -1,5 +1,5 @@
 function createCountries(countries) {
-    let cc = "";
+    let cc = "<option value='All'>All</option>";
     for (let i = 0; i < countries.length; i++) {
         cc += "<option value='" + countries[i].name + "'>" + countries[i].name + "</option>";
     }
