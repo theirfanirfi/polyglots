@@ -26,9 +26,9 @@ class APILessonView(FlaskView):
                     print('working ' + str(s.is_write_this == 1) + ' ' + str(s.is_write_this))
                     lesson = (
                         SimpleSentenceLessonBuilder(s)
-                        .split_into_words()
-                        .create_dropDown()
-                        .build()
+                            .split_into_words()
+                            .create_dropDown()
+                            .build()
                     )
                     lessons.append(lesson)
                 else:
@@ -51,49 +51,59 @@ class APILessonView(FlaskView):
         sentences = Lessons.query.filter_by(group_id=group_id)
         # questionnaire = Questionnaire.query.filter_by(group_id=group_id).first()
 
-        ad = Advertisements.query.filter(
-            user.age >= Advertisements.ad_lower_limit_age,
-            user.age <= Advertisements.ad_upper_limit_age,
-            Advertisements.ad_gender == user.gender,
-            Advertisements.is_bottom_ad == 0,
-            Advertisements.group_id == group_id
-        ).first()
-        ad_ques = list()
+        ad_sql = text("SELECT * FROM `advertisements` WHERE ("
+                      + "((advertisements.`ad_lower_limit_age` = 0) or (" + str(
+            user.age) + " >= advertisements.`ad_lower_limit_age` AND " + str(
+            user.age) + " <= advertisements.`ad_upper_limit_age`))"
+                      + " AND (advertisements.`ad_continent` = '" + str(
+            user.continent) + "' or advertisements.`ad_continent` = 'global')"
+                      + " AND (advertisements.`country` = '" + str(
+            user.country) + "' or advertisements.`country` = 'All')"
+                      + " AND (advertisements.`ad_gender` = '" + str(
+            user.gender) + "' or advertisements.`ad_gender` = 'Both')"
+                      + " AND is_bottom_ad = 0)")
+        ads = db.engine.execute(ad_sql)
+        ads_list = list()
+        if ads.rowcount > 0:
+            for ad in ads:
+                ad_data = dict()
+                ad_data['ad'] = AdSchema(many=False).dump(ad)
+                ad_ques = Questionnaire.query.filter_by(ad_id=ad.ad_id).all()
+                ad_data['questionnaire'] = QuestionnaireSchema(many=True).dump(ad_ques)
+                ads_list.append(ad_data)
 
-        if ad:
-            ad_ques = Questionnaire.query.filter_by(ad_id=ad.ad_id).all()
-            ad_ques = QuestionnaireSchema(many=True).dump(ad_ques)
+        bottom_ad_sql = text("SELECT * FROM `advertisements` WHERE ("
+                      + "((advertisements.`ad_lower_limit_age` = 0) or (" + str(
+            user.age) + " >= advertisements.`ad_lower_limit_age` AND " + str(
+            user.age) + " <= advertisements.`ad_upper_limit_age`))"
+                      + " AND (advertisements.`ad_continent` = '" + str(
+            user.continent) + "' or advertisements.`ad_continent` = 'global')"
+                      + " AND (advertisements.`country` = '" + str(
+            user.country) + "' or advertisements.`country` = 'All')"
+                      + " AND (advertisements.`ad_gender` = '" + str(
+            user.gender) + "' or advertisements.`ad_gender` = 'Both')"
+                      + " AND is_bottom_ad = 1)")
+        bottom_ads = db.engine.execute(bottom_ad_sql)
 
-
-
-
-        bottom_ads = Advertisements.query.filter(
-            user.age >= Advertisements.ad_lower_limit_age,
-            user.age <= Advertisements.ad_upper_limit_age,
-            Advertisements.ad_gender == user.gender,
-            Advertisements.is_bottom_ad == 1,
-            Advertisements.group_id == group_id
-        ).all()
         if sentences.count() > 0:
             sentences = sentences.all()
             for s in sentences:
                 if s.is_straight_translation == 1 or s.is_multiple_images or s.is_write_this == 1:
                     lesson = (
                         SimpleSentenceLessonBuilder(s)
-                        .split_into_words()
-                        .create_dropDown()
-                        .build()
+                            .split_into_words()
+                            .create_dropDown()
+                            .build()
                     )
                     lessons.append(lesson)
                 else:
-                    data={}
+                    data = {}
                     data["lesson"] = ls.dump(s)
                     data["dropdown"] = {}
                     lessons.append(data)
         response = {
             "lessons": lessons,
-            "questionnaire": ad_ques,
-            "ads": AdSchema(many=False).dump((ad)),
-            "bottom_ads": AdSchema(many=True).dump((bottom_ads)),
+            "ads": ads_list,
+            "bottom_ads": AdSchema(many=True).dump(bottom_ads),
         }
         return jsonify(response)
