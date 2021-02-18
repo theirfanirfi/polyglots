@@ -28,7 +28,7 @@ function createQuestionnaireField() {
 }
 
 $(document).ready(function () {
-    let url = "http://127.0.0.1:5000/admin/ads/get_continent_countries";
+    let url = "http://192.168.10.10:5000/admin/ads/get_continent_countries";
     let continent_select_field = $('#ad_continent');
     continent_select_field.change(function (event) {
         let continent_code = $(this).val();

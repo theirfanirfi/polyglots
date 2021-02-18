@@ -380,7 +380,7 @@ class Questionnaire(db.Model):
 
 class QuestionnaireSchema(ma.Schema):
     class Meta:
-        fields = ("q_id", "q_tags", "is_answer_to_write", "ad_id")
+        fields = ("q_id", "q_tags","q_question","is_answer_to_write", "ad_id")
 
 
 class Accomplishments(db.Model):

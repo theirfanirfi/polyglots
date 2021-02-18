@@ -8,6 +8,7 @@ from application.models.models import (
     Questionnaire,
     QuestionnaireSchema,
     Advertisements,
+Settings,
     AdSchema,
 )
 from application.builders.LessonBuilder import SimpleSentenceLessonBuilder
@@ -85,6 +86,12 @@ class APILessonView(FlaskView):
                       + " AND is_bottom_ad = 1)")
         bottom_ads = db.engine.execute(bottom_ad_sql)
 
+        setting = Settings.query.filter_by(setting_type='ad')
+        if setting.count() > 0:
+            setting = setting.first()
+        else:
+            setting = None
+
         if sentences.count() > 0:
             sentences = sentences.all()
             for s in sentences:
@@ -104,6 +111,7 @@ class APILessonView(FlaskView):
         response = {
             "lessons": lessons,
             "ads": ads_list,
+            "ads_setting": 3 if setting is None else setting.setting_value,
             "bottom_ads": AdSchema(many=True).dump(bottom_ads),
         }
         return jsonify(response)
